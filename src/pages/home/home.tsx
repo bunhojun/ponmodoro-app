@@ -8,7 +8,7 @@ const HomePage = () => {
     const currentUSer = useContext(CurrentUserContext);
     return (
         <Inner height='80vh' minHeight='400px'>
-            <h2>{currentUSer.displayName}'s todos</h2>
+            <h2>{currentUSer ? `${currentUSer.displayName}'s todos`: "user does not exist"}</h2>
             <Container height='80%'>
                 <PonmodoroFormComponent />
                 <ListComponent />

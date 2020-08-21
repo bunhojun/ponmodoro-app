@@ -1,5 +1,11 @@
 import styled from 'styled-components';
 
+export type StyleProps = {
+  height?: number | string,
+  width?: number | string,
+  minHeight?: number | string
+}
+
 export const Wrapper = styled.div`
   min-height: 500px;
   height: 100vh;
@@ -7,7 +13,7 @@ export const Wrapper = styled.div`
   position: relative;
 `;
 
-export const Container = styled.div`
+export const Container = styled.div<StyleProps>`
   height: ${props => props.height};
   padding: 20px;
   border-radius: 5px;
@@ -19,7 +25,7 @@ export const Centering = styled.div`
   justify-content: center;
 `;
 
-export const Inner = styled.div`
+export const Inner = styled.div<StyleProps>`
   height: ${props => props.height};
   min-height: ${props => props.minHeight};
   max-width: 800px;

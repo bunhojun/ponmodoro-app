@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent, MouseEvent } from 'react'
 import { Form } from '../common-style/common-style';
 import { SignInButton } from './styled-signin';
 import { auth } from '../../firebase/firebase';
@@ -9,7 +9,7 @@ const SignInComponent = () => {
         password: ''
     });
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const { email, password } = info;
         try {
@@ -20,7 +20,7 @@ const SignInComponent = () => {
         }
     }
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
         setInfo({
@@ -32,13 +32,13 @@ const SignInComponent = () => {
     return (
         <Form>
             <p>Signin</p>
-            <input 
+            <input
               type="email" 
               placeholder='email' 
               name='email' 
               value={info.email} 
               onChange={handleChange}/>
-            <input 
+            <input
               type="password" 
               placeholder='password' 
               name='password' 

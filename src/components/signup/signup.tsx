@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ChangeEvent, MouseEvent } from 'react'
 import { Form } from '../common-style/common-style';
 import { SignUpButton } from './styled-signup';
 import { auth, createUserProfileDocument } from '../../firebase/firebase';
@@ -15,7 +15,7 @@ const SignUpComponent = () => {
     );
     const { displayName, email, password, confirmPassword } = info;
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
         setInfo({
@@ -24,15 +24,15 @@ const SignUpComponent = () => {
         });
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        if(password !== confirmPassword) {
+        if (password !== confirmPassword) {
             alert("passwords don't match");
             return;
         }
 
-        if(!displayName) {
+        if (!displayName) {
             alert('user name is empty');
             return;
         }

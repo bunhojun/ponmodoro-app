@@ -1,25 +1,27 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, ChangeEvent } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import { Inner, Container, Centering } from '../../components/common-style/common-style';
-import CurrentUserContext from '../../contexts/user/UserContext';
-import { changeCompletionStatus } from './../../firebase/firebase';
+import CurrentUserContext, { UserType } from '../../contexts/user/UserContext';
+import { changeCompletionStatus } from '../../firebase/firebase';
 import { TimerContext, CircleTimer } from '../../providers/PonmodoroProvider/Ponmodoro/PonmodoroProvider';
 
-const PonmodoroPage = ({match}) => {
+
+const PonmodoroPage = ({match}: RouteComponentProps<{todoId: string}>) => {
     const initialButtonState = {
         isDisabled: false,
         startButtonColor: 'violet'
     }
     const [buttonState, setButtonState] = useState(initialButtonState);
-    const currentUser = useContext(CurrentUserContext);
+    const currentUser = useContext<UserType | null>(CurrentUserContext);
     const {startPonmodoro} = useContext(TimerContext);
-    const {todos} = currentUser;
+    const {todos} = currentUser || {"": {done: false, todo: ""}};
     const todoId = match.params.todoId;
-    const task = todos[todoId];
+    const task = todos? todos[todoId]: {done: false, todo: ""};
     const [done, setDone] = useState(task ? task.done: false);
     const {todo} = task || '';
 
     useEffect(() => {
-        if(task) {
+        if (task) {
             setDone(task.done);
         }
     }, [task]);
@@ -48,7 +50,7 @@ const PonmodoroPage = ({match}) => {
         };
     }
 
-    const handleChange = async (e) => {
+    const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         await changeCompletionStatus(todoId, currentUser);
     }
@@ -79,7 +81,7 @@ const PonmodoroPage = ({match}) => {
                         <h2>{todo}</h2>
                         <input type="checkbox" checked={done} onChange={handleChange}/>
                         <div>
-                            <textarea type='text' placeholder='memo'/>
+                            <textarea placeholder='memo'/>
                         </div>
                         <Centering>                            
                             <div

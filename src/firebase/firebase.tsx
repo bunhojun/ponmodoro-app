@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import { TodoType, UserType } from '../contexts/user/UserContext';
 
 const config = {
     apiKey: "AIzaSyDmqrehVAYs5kin62ptwj_508jDiSd6BUs",
@@ -15,9 +16,8 @@ const config = {
 
 firebase.initializeApp(config);
 
-export const createUserProfileDocument = async (userAuth, additionalData) => {
+export const createUserProfileDocument = async (userAuth: firebase.User | null, additionalData?: UserType): Promise<firebase.firestore.DocumentReference<firebase.firestore.DocumentData> | undefined> => {
   if (!userAuth) return;
-
   const userRef = firestore.doc(`users/${userAuth.uid}`);
 
   const snapShot = await userRef.get();
@@ -39,7 +39,8 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
-export const addTodo = async (todoContent, currentUser) => {
+export const addTodo = async (todoContent: string, currentUser: UserType | null) => {
+  if (!currentUser) return;
   const userRef = firestore.doc(`users/${currentUser.id}`);
   const id = new Date().getTime();
   await userRef.update({
@@ -53,10 +54,13 @@ export const addTodo = async (todoContent, currentUser) => {
   });
 }
 
-export const deleteTodo = async (todoId, currentUser) => {
+export const deleteTodo = async (todoId: string, currentUser: UserType | null) => {
+  if (!currentUser) return;
   const userRef = firestore.doc(`users/${currentUser.id}`);
-  const todos = currentUser.todos
-  delete todos[todoId];
+  const todos = currentUser.todos;
+  if (todos) {
+    delete todos[todoId];
+  }
   await userRef.update({
     todos: {
       ...todos
@@ -64,18 +68,18 @@ export const deleteTodo = async (todoId, currentUser) => {
   });
 }
 
-export const changeCompletionStatus = async (todoId, currentUser) => {
-  if(window.confirm('Do you want to change the completion status of this task?')) {
-    const todoToCheckOrUncheck = currentUser.todos[todoId];
-    todoToCheckOrUncheck.done = !todoToCheckOrUncheck.done;
-    await updateTodo(todoId, todoToCheckOrUncheck, currentUser);
-    return true;
-  }else {
-    return false;
+export const changeCompletionStatus = async (todoId: string, currentUser: UserType | null) => {
+  if (!currentUser) return;
+  if (window.confirm('Do you want to change the completion status of this task?')) {
+    if (currentUser.todos) {
+      const todoToCheckOrUncheck = currentUser.todos[todoId];
+      todoToCheckOrUncheck.done = !todoToCheckOrUncheck.done;
+      await updateTodo(todoId, todoToCheckOrUncheck, currentUser);
+    }
   }
 }
 
-export const updateTodo = async (idOfTodoToUpdate, newTodoContent, currentUser) => {
+export const updateTodo = async (idOfTodoToUpdate: string, newTodoContent: TodoType, currentUser: UserType) => {
   const userRef = firestore.doc(`users/${currentUser.id}`);
   const todos = currentUser.todos;
   await userRef.update({
@@ -87,23 +91,25 @@ export const updateTodo = async (idOfTodoToUpdate, newTodoContent, currentUser) 
 }
 
 export const signOut = async () => {
-  if(window.confirm('Do you want to sign out?')) {
+  if (window.confirm('Do you want to sign out?')) {
     await auth.signOut();
     localStorage.removeItem('currentUser');
   }
 }
 
 export const deleteAccount = async () => {
-  if(window.confirm('Do you want to delete this account?')) {
+  if (window.confirm('Do you want to delete this account?')) {
     const currentUser = auth.currentUser;
-    currentUser
-      .delete()
-      .then(() => {
-        localStorage.removeItem('currentUser');
-      })
-      .catch((e) => {
-        alert(e);
-    });
+    if (currentUser) {
+      currentUser
+        .delete()
+        .then(() => {
+          localStorage.removeItem('currentUser');
+        })
+        .catch((e) => {
+          alert(e);
+      });
+    }
   }
 }
 

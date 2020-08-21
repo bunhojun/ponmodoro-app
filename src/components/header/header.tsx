@@ -16,7 +16,7 @@ const HeaderComponent = () => {
 
     return (
         <Header>
-            {currentUser.id ?
+            {currentUser && currentUser.id ?
                 <React.Fragment>
                     <h1>
                       <Link to='/'>Ponmodoro</Link>

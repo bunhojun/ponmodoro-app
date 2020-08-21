@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, ChangeEvent, MouseEvent } from 'react';
 import { addTodo } from '../../firebase/firebase';
 import CurrentUserContext from '../../contexts/user/UserContext';
 
@@ -7,13 +7,13 @@ const PonmodoroFormComponent = () => {
     const [todo, setTodo] = useState('');
     const currentUser = useContext(CurrentUserContext);
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTodo(e.target.value);
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if(!todo) {
+        if (!todo) {
             alert('fill out the form');
             return;
         }

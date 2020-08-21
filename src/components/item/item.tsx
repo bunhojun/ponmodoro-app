@@ -1,12 +1,21 @@
-import React, { useContext } from 'react'
-import { ListItem, ItemContent, DeleteButton } from '../item/styled-item';
-import { withRouter } from 'react-router-dom';
+import React, { useContext, ChangeEvent, useState, FunctionComponent } from 'react'
+import { ListItem, ItemContent, DeleteButton } from './styled-item';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { deleteTodo, changeCompletionStatus } from '../../firebase/firebase';
-import CurrentUserContext from '../../contexts/user/UserContext';
-import { useState } from 'react';
+import CurrentUserContext, { TodoType } from '../../contexts/user/UserContext';
 import { useEffect } from 'react';
+import * as H from 'history'
 
-const ItemComponent = ({task, history}) => {
+interface ItemComponentProps extends RouteComponentProps {
+    task: [
+        string,
+        TodoType
+    ],
+    history: H.History
+}
+
+const ItemComponent: FunctionComponent<ItemComponentProps> = (props) => {
+    const {task, history} = props;
     const currentUser = useContext(CurrentUserContext);
     const {todo} = task[1];
     const [done, setDone] = useState(task[1].done);
@@ -16,7 +25,7 @@ const ItemComponent = ({task, history}) => {
         setDone(task[1].done);
     }, [task]);
 
-    const changeHandler = async (e) => {
+    const changeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         await changeCompletionStatus(todoId, currentUser);
     };
@@ -26,7 +35,7 @@ const ItemComponent = ({task, history}) => {
     };
 
     const deleteHandler = async () => {
-       if(window.confirm('Do you want to delete this task?')) {
+       if (window.confirm('Do you want to delete this task?')) {
            await deleteTodo(todoId, currentUser);
        }
     };

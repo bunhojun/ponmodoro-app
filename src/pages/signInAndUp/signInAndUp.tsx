@@ -11,7 +11,7 @@ const SignInAndUpPage = () => {
     return (
         <React.Fragment>
             {
-                currentUser.id ?
+                currentUser && currentUser.id ?
                     <Redirect to ='/' />
                     :
                     <Inner>
