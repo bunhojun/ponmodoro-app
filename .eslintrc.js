@@ -23,7 +23,7 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-        "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+        "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts", ".js"] }],
         "react/jsx-curly-newline": "off",
         "import/extensions": [
             "error",
