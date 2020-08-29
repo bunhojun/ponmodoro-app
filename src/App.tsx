@@ -1,45 +1,48 @@
-import React, { useState } from 'react';
-import './App.css';
-import { Route, Redirect, Switch } from 'react-router-dom';
-import CurrentUserContext, { UserType } from './contexts/user/UserContext';
-import SignInAndUpPage from './pages/signInAndUp/signInAndUp';
-import HomePage from './pages/home/home';
-import HeaderComponent from './components/header/header';
-import { Wrapper, Inner } from './components/common-style/common-style';
-import { auth, createUserProfileDocument } from './firebase/firebase';
-import PonmodoroPage from './pages/ponmodoro/ponmodoro';
-import { useEffect } from 'react';
-import PonmodoroProvider from './providers/PonmodoroProvider/Ponmodoro/PonmodoroProvider';
+import React, { useState, useEffect, FunctionComponent } from "react";
+import "./App.css";
+import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
+import CurrentUserContext, { UserType } from "./contexts/user/UserContext";
+import SignInAndUpPage from "./pages/signInAndUp/signInAndUp";
+import HomePage from "./pages/home/home";
+import HeaderComponent from "./components/header/header";
+import { Wrapper, Inner } from "./components/common-style/common-style";
+import { auth, createUserProfileDocument } from "./firebase/firebase";
+import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
+import PonmodoroProvider from "./providers/PonmodoroProvider/Ponmodoro/PonmodoroProvider";
 
-const App = () => {
-  const currentUserStorage = JSON.parse(localStorage.getItem('currentUser') || '{"":""}') || {};
+const App: FunctionComponent = () => {
+  const currentUserStorage =
+    JSON.parse(localStorage.getItem("currentUser") || '{"":""}') || {};
   const [currentUser, setCurrentUser] = useState<UserType>(currentUserStorage);
 
   useEffect(() => {
-    const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+    const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
         if (userRef) {
-          userRef.onSnapshot(snapShot => {
+          userRef.onSnapshot((snapShot) => {
             const snapshotData = snapShot.data();
             if (snapshotData && !snapshotData.todos) {
-              snapshotData.todos = {}
+              snapshotData.todos = {};
             }
             const currentUserData = {
               ...snapshotData,
-              id: snapShot.id
-            }
+              id: snapShot.id,
+            };
             setCurrentUser(currentUserData);
-            localStorage.setItem('currentUser', JSON.stringify(currentUserData));
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify(currentUserData)
+            );
           });
         }
-      }else {
+      } else {
         setCurrentUser({});
       }
     });
-    return (() => {
+    return () => {
       unsubscribeFromAuth();
-    });
+    };
   }, [setCurrentUser]);
 
   return (
@@ -48,31 +51,32 @@ const App = () => {
         <HeaderComponent />
         <Switch>
           <Route
-            exact path='/'
+            exact
+            path="/"
             render={() =>
-              currentUser.id ?
-                <HomePage />
-                :
-                <Redirect to='/signin' />
-            }/>
-          <Route 
-            path='/ponmodoro/:todoId' 
-            render={params =>
-              currentUser.id ?
+              currentUser.id ? <HomePage /> : <Redirect to="/signin" />
+            }
+          />
+          <Route
+            path="/ponmodoro/:todoId"
+            render={(props: RouteComponentProps<MatchProps>) =>
+              currentUser.id ? (
                 <PonmodoroProvider>
-                  <PonmodoroPage {...params} />
+                  <PonmodoroPage todoId={props.match.params.todoId} />
                 </PonmodoroProvider>
-                :
-                <Redirect to='/signin' />
-            } />
-          <Route path='/signin' component={SignInAndUpPage} />
+              ) : (
+                <Redirect to="/signin" />
+              )
+            }
+          />
+          <Route path="/signin" component={SignInAndUpPage} />
         </Switch>
       </CurrentUserContext.Provider>
       <footer>
         <Inner>footer</Inner>
       </footer>
     </Wrapper>
-  )
-}
+  );
+};
 
 export default App;

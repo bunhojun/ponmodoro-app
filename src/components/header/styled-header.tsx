@@ -10,7 +10,7 @@ export const Header = styled.header`
 
 export const Navigation = styled.nav`
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   width: 200px;
 `;
 

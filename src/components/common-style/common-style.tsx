@@ -1,33 +1,33 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export type StyleProps = {
-  height?: number | string,
-  width?: number | string,
-  minHeight?: number | string
-}
+  height?: number | string;
+  width?: number | string;
+  minHeight?: number | string;
+};
 
 export const Wrapper = styled.div`
   min-height: 500px;
   height: 100vh;
-  background-image: linear-gradient(to right bottom,#f3206d,#fed636);
+  background-image: linear-gradient(to right bottom, #f3206d, #fed636);
   position: relative;
 `;
 
 export const Container = styled.div<StyleProps>`
-  height: ${props => props.height};
+  height: ${(props) => props.height};
   padding: 20px;
   border-radius: 5px;
   background-color: #fff;
 `;
 
 export const Centering = styled.div`
-  display:flex;
+  display: flex;
   justify-content: center;
 `;
 
 export const Inner = styled.div<StyleProps>`
-  height: ${props => props.height};
-  min-height: ${props => props.minHeight};
+  height: ${(props) => props.height};
+  min-height: ${(props) => props.minHeight};
   max-width: 800px;
   margin: 0 auto;
   text-align: center;

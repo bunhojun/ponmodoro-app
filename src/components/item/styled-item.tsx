@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ListItem = styled.li`
   padding: 5px 7px;
@@ -16,4 +16,4 @@ export const DeleteButton = styled.span`
   &:hover {
     color: red;
   }
-`
+`;

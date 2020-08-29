@@ -64,6 +64,6 @@
     }
   },
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --max-warnings=0 --ext .tsx --ext .ts --fix"
+    "*.{ts,tsx}": "eslint --max-warnings=20 --ext .tsx --ext .ts --fix"
   }
 }

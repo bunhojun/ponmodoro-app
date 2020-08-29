@@ -1,6 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-export const SignInAndUpContainer = styled.div`
+const SignInAndUpContainer = styled.div`
   display: flex;
   justify-content: space-around;
 `;
+
+export default SignInAndUpContainer;
