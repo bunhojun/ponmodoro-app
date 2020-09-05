@@ -1,20 +1,19 @@
 import React, { useContext, FunctionComponent } from "react";
+import { Typography } from "@material-ui/core";
 import ListComponent from "../../components/list/list";
 import { Inner, Container } from "../../components/common-style/common-style";
 import CurrentUserContext from "../../contexts/user/UserContext";
-import PonmodoroFormComponent from "../../components/ponmodoro-form/ponmodoro-form";
 
 const HomePage: FunctionComponent = () => {
   const currentUSer = useContext(CurrentUserContext);
   return (
     <Inner height="80vh" minHeight="400px">
-      <h2>
+      <Typography variant="h2">
         {currentUSer
-          ? `${currentUSer.displayName}'s todos`
+          ? `${currentUSer.displayName}'s todo`
           : "the user does not exist"}
-      </h2>
+      </Typography>
       <Container height="80%">
-        <PonmodoroFormComponent />
         <ListComponent />
       </Container>
     </Inner>

@@ -1,3 +1,4 @@
+import { Button, Checkbox, TextField, Typography } from "@material-ui/core";
 import React, { useContext, useEffect, useState, ChangeEvent } from "react";
 import {
   Inner,
@@ -90,10 +91,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       <Container height="80%">
         {task ? (
           <>
-            <h2>{todo}</h2>
-            <input type="checkbox" checked={done} onChange={handleChange} />
+            <Typography variant="h2">
+              <Checkbox checked={done} onChange={handleChange} />
+              {todo}
+            </Typography>
             <div>
-              <textarea placeholder="memo" />
+              <TextField label="memo" variant="outlined" />
             </div>
             <Centering>
               <div
@@ -110,14 +113,14 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                 />
               </div>
             </Centering>
-            <button
+            <Button
               type="button"
               disabled={buttonState.isDisabled}
               style={{ backgroundColor: buttonState.startButtonColor }}
               onClick={start}
             >
               start ponmodoro
-            </button>
+            </Button>
           </>
         ) : (
           <div>todo does not exist</div>

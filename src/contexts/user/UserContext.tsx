@@ -9,7 +9,7 @@ export type UserType = {
   id?: string | null;
   displayName?: string | null;
   todos?: {
-    [key: string]: TodoType;
+    [todoId: string]: TodoType;
   };
 };
 

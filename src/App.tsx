@@ -73,7 +73,7 @@ const App: FunctionComponent = () => {
         </Switch>
       </CurrentUserContext.Provider>
       <footer>
-        <Inner>footer</Inner>
+        <Inner>&#169; Hojun Bun</Inner>
       </footer>
     </Wrapper>
   );
