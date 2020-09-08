@@ -6,22 +6,32 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { InputBase, List, makeStyles } from "@material-ui/core";
+import {
+  FormControlLabel,
+  InputBase,
+  List,
+  makeStyles,
+  Switch,
+} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import ItemComponent from "../item/item";
 import CurrentUserContext from "../../contexts/user/UserContext";
 import PonmodoroFormComponent from "../ponmodoro-form/ponmodoro-form";
 
 const useStyles = makeStyles({
+  sortWrapper: {
+    display: "flex",
+    justifyContent: "center",
+  },
   searchWrapper: {
     width: "40%",
     display: "flex",
     alignItems: "center",
     borderRadius: 5,
-    margin: "0 auto",
     backgroundColor: "#e2e2e2",
     padding: "2px 5px",
     marginBottom: 5,
+    marginRight: 10,
   },
   searchInput: {
     width: "100%",
@@ -39,18 +49,22 @@ const ListComponent: FunctionComponent = () => {
     "": { done: false, todo: "" },
   };
   const [sortKeyword, setSortKeyword] = useState("");
+  const [showCompleted, setShowCompleted] = useState(false);
   const returnSortedArray = useCallback(() => {
-    let sortedArray =
+    const sortedArray =
       todos && typeof todos === "object"
-        ? Object.entries(todos).sort((a, b) => Number(b[0]) - Number(a[0]))
+        ? Object.entries(todos)
+            .sort((a, b) => Number(b[0]) - Number(a[0]))
+            .filter((item) => {
+              const completedMatch = showCompleted ? true : !item[1].done;
+              const wordMatch = sortKeyword
+                ? item[1].todo.includes(sortKeyword)
+                : true;
+              return completedMatch && wordMatch;
+            })
         : [];
-    if (sortKeyword) {
-      sortedArray = sortedArray.filter((item) =>
-        item[1].todo.includes(sortKeyword)
-      );
-    }
     return sortedArray;
-  }, [sortKeyword, todos]);
+  }, [sortKeyword, showCompleted, todos]);
   const [sortedTodoArray, setSortedArray] = useState(returnSortedArray());
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,18 +76,28 @@ const ListComponent: FunctionComponent = () => {
     }
   };
 
+  const onChangeSortCondition = () => {
+    setShowCompleted((currentConditon) => !currentConditon);
+  };
+
   useEffect(() => {
     setSortedArray(returnSortedArray());
-  }, [returnSortedArray, sortKeyword]);
+  }, [returnSortedArray]);
 
   return (
     <>
-      <div className={classes.searchWrapper}>
-        <SearchIcon />
-        <InputBase
-          placeholder="Search todo"
-          onChange={onSearch}
-          className={classes.searchInput}
+      <div className={classes.sortWrapper}>
+        <div className={classes.searchWrapper}>
+          <SearchIcon />
+          <InputBase
+            placeholder="Search todo"
+            onChange={onSearch}
+            className={classes.searchInput}
+          />
+        </div>
+        <FormControlLabel
+          control={<Switch onChange={onChangeSortCondition} />}
+          label="show completed tasks"
         />
       </div>
       <List className={classes.list}>

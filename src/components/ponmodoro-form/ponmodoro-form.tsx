@@ -21,27 +21,30 @@ const useStyles = makeStyles({
     width: "100%",
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "start",
   },
   textInput: {
     width: "88%",
     marginLeft: 5,
+    marginTop: 5,
   },
 });
 
 const PonmodoroFormComponent: FunctionComponent = () => {
   const [todo, setTodo] = useState("");
+  const [isErroneous, setIsErroneous] = useState(false);
   const classes = useStyles();
   const currentUser = useContext(CurrentUserContext);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsErroneous(false);
     setTodo(e.target.value);
   };
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!todo) {
-      alert("fill out the form");
+      setIsErroneous(true);
       return;
     }
     await addTodo(todo, currentUser);
@@ -53,10 +56,12 @@ const PonmodoroFormComponent: FunctionComponent = () => {
       <form className={classes.form}>
         <Checkbox disabled />
         <TextField
+          error={isErroneous}
           value={todo}
           onChange={handleChange}
           className={classes.textInput}
           placeholder="add todo"
+          helperText={isErroneous && "fill out the form"}
         />
         <IconButton type="submit" onClick={handleSubmit}>
           <AddIcon />
