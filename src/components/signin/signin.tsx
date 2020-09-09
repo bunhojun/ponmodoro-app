@@ -4,7 +4,16 @@ import React, {
   MouseEvent,
   FunctionComponent,
 } from "react";
-import { TextField, Button, makeStyles, Typography, Dialog, DialogTitle, DialogContent, DialogContentText } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  makeStyles,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+} from "@material-ui/core";
 import { Form } from "../common-style/common-style";
 import { auth, signInWithGoogle } from "../../firebase/firebase";
 
@@ -162,9 +171,7 @@ const SignInComponent: FunctionComponent = () => {
       <Dialog open={modalState.open} onClose={handleClose}>
         <DialogTitle>Error occurred while logging in</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {modalState.message}
-          </DialogContentText>
+          <DialogContentText>{modalState.message}</DialogContentText>
         </DialogContent>
       </Dialog>
     </>
