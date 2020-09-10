@@ -7,6 +7,7 @@ import {
 } from "../../components/common-style/common-style";
 import CurrentUserContext, { UserType } from "../../contexts/user/UserContext";
 import { changeCompletionStatus } from "../../firebase/firebase";
+import { ModalContext } from "../../providers/modal/ModalProvider";
 import {
   TimerContext,
   CircleTimer,
@@ -27,6 +28,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const [buttonState, setButtonState] = useState(initialButtonState);
   const currentUser = useContext<UserType | null>(CurrentUserContext);
   const { startPonmodoro } = useContext(TimerContext);
+  const { openBasicModal } = useContext(ModalContext);
   const { todos } = currentUser || { "": { done: false, todo: "" } };
   const task = todos ? todos[todoId] : { done: false, todo: "" };
   const [done, setDone] = useState(task ? task.done : false);
@@ -71,7 +73,10 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
 
   const start = () => {
     if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
+      openBasicModal(
+        "browser incompatible",
+        "This browser does not support desktop notification"
+      );
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(() => {
         setButtonState((prevButtonState) => {

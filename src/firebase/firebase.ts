@@ -47,7 +47,7 @@ export const createUserProfileDocument = async (
         ...additionalData,
       });
     } catch (error) {
-      alert(error.message);
+      // handle error
     }
   }
 
@@ -109,37 +109,24 @@ export const changeCompletionStatus = async (
   currentUser: UserType | null
 ): Promise<void> => {
   if (!currentUser) return;
-  if (
-    window.confirm("Do you want to change the completion status of this task?")
-  ) {
-    if (currentUser.todos) {
-      const todoToCheckOrUncheck = currentUser.todos[todoId];
-      todoToCheckOrUncheck.done = !todoToCheckOrUncheck.done;
-      await updateTodo(todoId, todoToCheckOrUncheck, currentUser);
-    }
+  if (currentUser.todos) {
+    const todoToCheckOrUncheck = currentUser.todos[todoId];
+    todoToCheckOrUncheck.done = !todoToCheckOrUncheck.done;
+    await updateTodo(todoId, todoToCheckOrUncheck, currentUser);
   }
 };
 
 export const signOut = async (): Promise<void> => {
-  if (window.confirm("Do you want to sign out?")) {
-    await auth.signOut();
-    localStorage.removeItem("currentUser");
-  }
+  await auth.signOut();
+  localStorage.removeItem("currentUser");
 };
 
 export const deleteAccount = async (): Promise<void> => {
-  if (window.confirm("Do you want to delete this account?")) {
-    const { currentUser } = auth;
-    if (currentUser) {
-      currentUser
-        .delete()
-        .then(() => {
-          localStorage.removeItem("currentUser");
-        })
-        .catch((e) => {
-          alert(e);
-        });
-    }
+  const { currentUser } = auth;
+  if (currentUser) {
+    currentUser.delete().then(() => {
+      localStorage.removeItem("currentUser");
+    });
   }
 };
 

@@ -12,6 +12,7 @@ import React, { useContext, FunctionComponent, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CurrentUserContext from "../../contexts/user/UserContext";
 import { deleteAccount, signOut } from "../../firebase/firebase";
+import { ModalContext } from "../../providers/modal/ModalProvider";
 
 const useStyles = makeStyles(() => ({
   navBar: {
@@ -25,18 +26,23 @@ const useStyles = makeStyles(() => ({
 
 const HeaderComponent: FunctionComponent = () => {
   const currentUser = useContext(CurrentUserContext);
+  const { openConfirmationModal } = useContext(ModalContext);
   const [isAbleToShowDrawer, setIsAbleToShowDrawer] = useState(false);
   const history = useHistory();
   const classes = useStyles();
 
   const onClickSignOut = () => {
     setIsAbleToShowDrawer(false);
-    signOut();
+    openConfirmationModal("Sign out", "Do you want to sign out?", signOut);
   };
 
   const onClickDeleteAccount = () => {
     setIsAbleToShowDrawer(false);
-    deleteAccount();
+    openConfirmationModal(
+      "delete account",
+      "Do you want to delete this account?",
+      deleteAccount
+    );
   };
 
   const onClickMenuIcon = () => {

@@ -1,34 +1,56 @@
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import React, { createContext, ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useState } from "react";
 
-type ModalStateType = {
+interface ModalStateType {
   open: boolean;
-  message: string;
-  title: string;
-};
+  message: string | null;
+  title: string | null;
+}
+
+interface ConfirmationModalStateType extends ModalStateType {
+  callback: (() => void | Promise<void>) | null;
+}
 
 type ModalContextType = {
   basicModalState: ModalStateType;
+  confirmationModalState: ConfirmationModalStateType;
   openBasicModal: (
-    basicModalTitle?: string,
-    basicModalMessage?: string
+    basicModalTitle: string | null,
+    basicModalMessage: string | null
   ) => void;
+  openConfirmationModal: (
+    confirmationModalTitle: string | null,
+    confirmationModalMessage: string | null,
+    callbackOnApprove: () => void | Promise<void>
+  ) => void | null;
 };
 
 const defaultBasicModalState = {
   open: false,
-  message: "",
   title: "",
+  message: "",
+};
+
+const defaultConfirmationModalState = {
+  open: false,
+  title: "",
+  message: "",
+  callback: null,
 };
 
 export const ModalContext = createContext<ModalContextType>({
   basicModalState: defaultBasicModalState,
+  confirmationModalState: defaultConfirmationModalState,
   openBasicModal: () => {
+    // initial state
+  },
+  openConfirmationModal: () => {
     // initial state
   },
 });
@@ -38,20 +60,52 @@ type ModalProviderProps = {
 };
 
 const ModalProvider = ({ children }: ModalProviderProps): JSX.Element => {
-  const [basicModalState, setBasicModalState] = useState(
+  const [basicModalState, setBasicModalState] = useState<ModalStateType>(
     defaultBasicModalState
   );
+  const [confirmationModalState, setConfirmationModalState] = useState<
+    ConfirmationModalStateType
+  >(defaultConfirmationModalState);
 
   const openBasicModal = (
-    basicModalTitle?: string,
-    basicModalMessage?: string
+    basicModalTitle: string | null,
+    basicModalMessage: string | null
   ) => {
     setBasicModalState({
       open: true,
-      message: basicModalMessage || "",
       title: basicModalTitle || "",
+      message: basicModalMessage || "",
     });
   };
+
+  const openConfirmationModal = (
+    confirmationModalTitle: string | null,
+    confirmationModalMessage: string | null,
+    callbackOnApprove: (() => void | Promise<void>) | null
+  ) => {
+    setConfirmationModalState({
+      open: true,
+      title: confirmationModalTitle || "",
+      message: confirmationModalMessage || "",
+      callback: callbackOnApprove,
+    });
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalState((currentModalState) => {
+      return {
+        ...currentModalState,
+        open: false,
+      };
+    });
+  };
+
+  const onApprove = useCallback(() => {
+    if (confirmationModalState.callback) {
+      confirmationModalState.callback();
+    }
+    closeConfirmationModal();
+  }, [confirmationModalState]);
 
   const closeBasicModal = () => {
     setBasicModalState((currentModalState) => {
@@ -66,7 +120,9 @@ const ModalProvider = ({ children }: ModalProviderProps): JSX.Element => {
     <ModalContext.Provider
       value={{
         basicModalState,
+        confirmationModalState,
         openBasicModal,
+        openConfirmationModal,
       }}
     >
       {children}
@@ -75,6 +131,20 @@ const ModalProvider = ({ children }: ModalProviderProps): JSX.Element => {
         <DialogTitle>{basicModalState.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{basicModalState.message}</DialogContentText>
+        </DialogContent>
+      </Dialog>
+      {/* confirmation modal */}
+      <Dialog
+        open={confirmationModalState.open}
+        onClose={closeConfirmationModal}
+      >
+        <DialogTitle>{confirmationModalState.title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {confirmationModalState.message}
+          </DialogContentText>
+          <Button onClick={onApprove}>yes</Button>
+          <Button onClick={closeConfirmationModal}>no</Button>
         </DialogContent>
       </Dialog>
     </ModalContext.Provider>

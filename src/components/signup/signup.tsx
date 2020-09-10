@@ -5,12 +5,7 @@ import React, {
   FunctionComponent,
   useContext,
 } from "react";
-import {
-  Button,
-  makeStyles,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Button, makeStyles, TextField, Typography } from "@material-ui/core";
 import { Form } from "../common-style/common-style";
 import { auth, createUserProfileDocument } from "../../firebase/firebase";
 import validateEmail from "../../utils/validateEmail";
@@ -80,7 +75,6 @@ const SignUpComponent: FunctionComponent = () => {
       [name]: value,
     });
   };
-
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
