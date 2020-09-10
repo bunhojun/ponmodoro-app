@@ -10,7 +10,7 @@ import { changeCompletionStatus } from "../../firebase/firebase";
 import {
   TimerContext,
   CircleTimer,
-} from "../../providers/PonmodoroProvider/Ponmodoro/PonmodoroProvider";
+} from "../../providers/ponmodoro/PonmodoroProvider";
 
 export type MatchProps = {
   todoId: string;

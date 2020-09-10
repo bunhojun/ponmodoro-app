@@ -8,7 +8,8 @@ import HeaderComponent from "./components/header/header";
 import { Wrapper, Inner } from "./components/common-style/common-style";
 import { auth, createUserProfileDocument } from "./firebase/firebase";
 import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
-import PonmodoroProvider from "./providers/PonmodoroProvider/Ponmodoro/PonmodoroProvider";
+import PonmodoroProvider from "./providers/ponmodoro/PonmodoroProvider";
+import ModalProvider from "./providers/modal/ModalProvider";
 
 const App: FunctionComponent = () => {
   const currentUserStorage =
@@ -48,29 +49,31 @@ const App: FunctionComponent = () => {
   return (
     <Wrapper>
       <CurrentUserContext.Provider value={currentUser}>
-        <HeaderComponent />
-        <Switch>
-          <Route
-            exact
-            path="/"
-            render={() =>
-              currentUser.id ? <HomePage /> : <Redirect to="/signin" />
-            }
-          />
-          <Route
-            path="/ponmodoro/:todoId"
-            render={(props: RouteComponentProps<MatchProps>) =>
-              currentUser.id ? (
-                <PonmodoroProvider>
-                  <PonmodoroPage todoId={props.match.params.todoId} />
-                </PonmodoroProvider>
-              ) : (
-                <Redirect to="/signin" />
-              )
-            }
-          />
-          <Route path="/signin" component={SignInAndUpPage} />
-        </Switch>
+        <ModalProvider>
+          <HeaderComponent />
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={() =>
+                currentUser.id ? <HomePage /> : <Redirect to="/signin" />
+              }
+            />
+            <Route
+              path="/ponmodoro/:todoId"
+              render={(props: RouteComponentProps<MatchProps>) =>
+                currentUser.id ? (
+                  <PonmodoroProvider>
+                    <PonmodoroPage todoId={props.match.params.todoId} />
+                  </PonmodoroProvider>
+                ) : (
+                  <Redirect to="/signin" />
+                )
+              }
+            />
+            <Route path="/signin" component={SignInAndUpPage} />
+          </Switch>
+        </ModalProvider>
       </CurrentUserContext.Provider>
       <footer>
         <Inner>&#169; Hojun Bun</Inner>

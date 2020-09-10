@@ -3,19 +3,13 @@ import React, {
   ChangeEvent,
   MouseEvent,
   FunctionComponent,
+  useContext,
 } from "react";
-import {
-  TextField,
-  Button,
-  makeStyles,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-} from "@material-ui/core";
+import { TextField, Button, makeStyles, Typography } from "@material-ui/core";
 import { Form } from "../common-style/common-style";
 import { auth, signInWithGoogle } from "../../firebase/firebase";
+import { ModalContext } from "../../providers/modal/ModalProvider";
+import validateEmail from "../../utils/validateEmail";
 
 const useStyles = makeStyles({
   textInput: {
@@ -37,11 +31,7 @@ const SignInComponent: FunctionComponent = () => {
     email: "",
     password: "",
   });
-
-  const [modalState, setModalState] = useState({
-    open: false,
-    message: "",
-  });
+  const { openBasicModal } = useContext(ModalContext);
 
   const [emailErrorState, setEmailErrorState] = useState({
     error: false,
@@ -51,11 +41,14 @@ const SignInComponent: FunctionComponent = () => {
 
   const classes = useStyles();
 
+  const errorMessageTitle = "Error occurred while logging in";
+
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const { email, password } = info;
+    const emailInvalid = email && !validateEmail(email);
 
-    if (!password || !email) {
+    if (!password || !email || emailInvalid) {
       if (!password) {
         setPasswordErrorState(true);
       }
@@ -65,6 +58,12 @@ const SignInComponent: FunctionComponent = () => {
           message: "Provide your email address",
         });
       }
+      if (emailInvalid) {
+        setEmailErrorState({
+          error: true,
+          message: "The email address you provided is invalid",
+        });
+      }
       return;
     }
 
@@ -72,17 +71,7 @@ const SignInComponent: FunctionComponent = () => {
       await auth.signInWithEmailAndPassword(email, password);
       setInfo({ email: "", password: "" });
     } catch (err) {
-      if (err.code === "auth/invalid-email") {
-        setEmailErrorState({
-          error: true,
-          message: "The email address you provided is invalid",
-        });
-        return;
-      }
-      setModalState({
-        open: true,
-        message: err.message,
-      });
+      openBasicModal(errorMessageTitle, err.message);
     }
   };
 
@@ -103,22 +92,12 @@ const SignInComponent: FunctionComponent = () => {
     });
   };
 
-  const handleClose = () => {
-    setModalState({
-      open: false,
-      message: "",
-    });
-  };
-
   const handleGoogleSignIn = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       signInWithGoogle();
     } catch (err) {
-      setModalState({
-        open: true,
-        message: err.message,
-      });
+      openBasicModal(errorMessageTitle, err.message);
     }
   };
 
@@ -168,12 +147,6 @@ const SignInComponent: FunctionComponent = () => {
           Sign In With A Google Account
         </Button>
       </Form>
-      <Dialog open={modalState.open} onClose={handleClose}>
-        <DialogTitle>Error occurred while logging in</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{modalState.message}</DialogContentText>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
