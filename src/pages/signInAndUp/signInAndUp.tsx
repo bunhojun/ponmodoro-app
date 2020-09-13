@@ -9,7 +9,7 @@ import SignUpComponent from "../../components/signup/signup";
 
 const useStyles = makeStyles({
   heading: {
-    fontSize: 30,
+    fontSize: "2.5rem",
     marginBottom: 25,
   },
 });

@@ -17,6 +17,7 @@ import {
   changeCompletionStatus,
 } from "../../firebase/firebase";
 import CurrentUserContext, { TodoType } from "../../contexts/user/UserContext";
+import { ModalContext } from "../../providers/modal/ModalProvider";
 
 const useStyles = makeStyles({
   listItem: {
@@ -55,6 +56,7 @@ interface ItemComponentProps extends RouteComponentProps {
 
 const ItemComponent = (props: ItemComponentProps): JSX.Element => {
   const currentUser = useContext(CurrentUserContext);
+  const { openConfirmationModal } = useContext(ModalContext);
   const { task } = props;
   const defaultTodo = task[1].todo;
   const [todo, setTodo] = useState(task[1].todo);
@@ -73,10 +75,14 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
     await changeCompletionStatus(todoId, currentUser);
   };
 
-  const deleteHandler = async () => {
-    if (window.confirm("Do you want to delete this task?")) {
-      await deleteTodo(todoId, currentUser);
-    }
+  const deleteHandler = () => {
+    openConfirmationModal(
+      "deleting a task",
+      "Do you want to delete this task?",
+      () => {
+        deleteTodo(todoId, currentUser);
+      }
+    );
   };
 
   const onChangeTextInput = (e: ChangeEvent<HTMLInputElement>) => {

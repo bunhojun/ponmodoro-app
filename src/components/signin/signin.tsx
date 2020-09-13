@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     marginTop: 5,
   },
   heading: {
-    fontSize: 20,
+    fontSize: "1.5rem",
   },
 });
 

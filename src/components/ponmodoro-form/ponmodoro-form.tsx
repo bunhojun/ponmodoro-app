@@ -5,13 +5,7 @@ import React, {
   MouseEvent,
   FunctionComponent,
 } from "react";
-import {
-  Checkbox,
-  IconButton,
-  ListItem,
-  makeStyles,
-  TextField,
-} from "@material-ui/core";
+import { Checkbox, IconButton, makeStyles, TextField } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import CurrentUserContext from "../../contexts/user/UserContext";
 import { addTodo } from "../../firebase/firebase";
@@ -52,22 +46,20 @@ const PonmodoroFormComponent: FunctionComponent = () => {
   };
 
   return (
-    <ListItem>
-      <form className={classes.form}>
-        <Checkbox disabled />
-        <TextField
-          error={isErroneous}
-          value={todo}
-          onChange={handleChange}
-          className={classes.textInput}
-          placeholder="add todo"
-          helperText={isErroneous && "fill out the form"}
-        />
-        <IconButton type="submit" onClick={handleSubmit}>
-          <AddIcon />
-        </IconButton>
-      </form>
-    </ListItem>
+    <form className={classes.form}>
+      <Checkbox disabled />
+      <TextField
+        error={isErroneous}
+        value={todo}
+        onChange={handleChange}
+        className={classes.textInput}
+        placeholder="add todo"
+        helperText={isErroneous && "fill out the form"}
+      />
+      <IconButton type="submit" onClick={handleSubmit}>
+        <AddIcon />
+      </IconButton>
+    </form>
   );
 };
 
