@@ -1,4 +1,14 @@
-import { Button, Checkbox, TextField, Typography } from "@material-ui/core";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import React, { useContext, useEffect, useState, ChangeEvent } from "react";
 import {
   Inner,
@@ -12,6 +22,7 @@ import {
   TimerContext,
   CircleTimer,
 } from "../../providers/ponmodoro/PonmodoroProvider";
+import convertMinuteToMillisecond from "../../utils/convertMinuteToMillisecond";
 
 export type MatchProps = {
   todoId: string;
@@ -19,16 +30,45 @@ export type MatchProps = {
 
 type PonmodoroPageProps = MatchProps;
 
+const useStyles = makeStyles({
+  taskName: {
+    fontSize: "2rem",
+    marginBottom: 10,
+  },
+  select: {
+    width: 180,
+    marginBottom: 10,
+  },
+  startButton: {
+    marginTop: 10,
+    backgroundColor: "violet",
+  },
+  buttonDisabled: {
+    backgroundColor: "gray",
+  },
+  memoFieldWrapper: {
+    marginTop: 10,
+  },
+  memoField: {
+    width: "50%",
+  },
+});
+
 const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const { todoId } = props;
-  const initialButtonState = {
+  const initialInputState = {
     isDisabled: false,
     startButtonColor: "violet",
   };
-  const [buttonState, setButtonState] = useState(initialButtonState);
+  const [inputState, setInputState] = useState(initialInputState);
   const currentUser = useContext<UserType | null>(CurrentUserContext);
-  const { startPonmodoro } = useContext(TimerContext);
+  const {
+    startPonmodoro,
+    setMainSessionDuration,
+    mainSessionDuration,
+  } = useContext(TimerContext);
   const { openBasicModal } = useContext(ModalContext);
+  const classes = useStyles();
   const { todos } = currentUser || { "": { done: false, todo: "" } };
   const task = todos ? todos[todoId] : { done: false, todo: "" };
   const [done, setDone] = useState(task ? task.done : false);
@@ -60,7 +100,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
 
   const onLastSessionEnd = () => {
     const notification = new Notification("last session done. well done");
-    setButtonState(initialButtonState);
+    setInputState(initialInputState);
     notification.onclose = () => {
       // close handler
     };
@@ -71,6 +111,15 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
     await changeCompletionStatus(todoId, currentUser);
   };
 
+  const onSelectDuration = (
+    e: ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    setMainSessionDuration(Number(e.target.value));
+  };
+
   const start = () => {
     if (!("Notification" in window)) {
       openBasicModal(
@@ -79,9 +128,9 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       );
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(() => {
-        setButtonState((prevButtonState) => {
+        setInputState((prevInputState) => {
           return {
-            ...prevButtonState,
+            ...prevInputState,
             isDisabled: true,
             startButtonColor: "gray",
           };
@@ -92,17 +141,28 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   };
 
   return (
-    <Inner height="90vh" minHeight="400px">
-      <Container height="80%">
+    <Inner>
+      <Container>
         {task ? (
           <>
-            <Typography variant="h2">
+            <Typography variant="h2" className={classes.taskName}>
               <Checkbox checked={done} onChange={handleChange} />
               {todo}
             </Typography>
-            <div>
-              <TextField label="memo" variant="outlined" />
-            </div>
+            <FormControl variant="outlined" className={classes.select}>
+              <InputLabel>duration</InputLabel>
+              <Select
+                value={mainSessionDuration}
+                disabled={inputState.isDisabled}
+                labelWidth={60}
+                onChange={onSelectDuration}
+              >
+                <MenuItem value={convertMinuteToMillisecond(50)}>50</MenuItem>
+                <MenuItem value={convertMinuteToMillisecond(25)}>25</MenuItem>
+                <MenuItem value={convertMinuteToMillisecond(10)}>10</MenuItem>
+                <MenuItem value={convertMinuteToMillisecond(1)}>1</MenuItem>
+              </Select>
+            </FormControl>
             <Centering>
               <div
                 style={{
@@ -111,7 +171,6 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                 }}
               >
                 <CircleTimer
-                  strokeWidth={5}
                   onFinishMainSession={onMainSessionEnd}
                   onFinishBreak={onBreakEnd}
                   onFinishLastSession={onLastSessionEnd}
@@ -120,12 +179,21 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
             </Centering>
             <Button
               type="button"
-              disabled={buttonState.isDisabled}
-              style={{ backgroundColor: buttonState.startButtonColor }}
+              disabled={inputState.isDisabled}
               onClick={start}
+              className={classes.startButton}
             >
               start ponmodoro
             </Button>
+            <div className={classes.memoFieldWrapper}>
+              <TextField
+                className={classes.memoField}
+                label="memo"
+                variant="outlined"
+                multiline
+                rows={4}
+              />
+            </div>
           </>
         ) : (
           <div>todo does not exist</div>

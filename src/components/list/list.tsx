@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   InputBase,
   List,
+  ListItem,
   makeStyles,
   Switch,
 } from "@material-ui/core";
@@ -101,9 +102,9 @@ const ListComponent: FunctionComponent = () => {
         />
       </div>
       <List className={classes.list}>
-        <li>
+        <ListItem>
           <PonmodoroFormComponent />
-        </li>
+        </ListItem>
         {sortedTodoArray.map((todo, index) => {
           const keyNum = index;
           return <ItemComponent task={todo} key={keyNum} />;

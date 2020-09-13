@@ -1,3 +1,4 @@
+import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
 import React, {
   useContext,
   createContext,
@@ -10,19 +11,23 @@ import React, {
   ReactNode,
 } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import convertMinuteToMillisecond from "../../utils/convertMinuteToMillisecond";
 
 type TimerContextType = {
   progress: number | null;
   duration: number;
+  mainSessionDuration: number;
   startPonmodoro: () => void;
   setOnFinishBreak: Dispatch<SetStateAction<() => void>>;
   setOnFinishLastSession: Dispatch<SetStateAction<() => void>>;
   setOnFinishMainSession: Dispatch<SetStateAction<() => void>>;
+  setMainSessionDuration: Dispatch<SetStateAction<number>>;
 };
 
 export const TimerContext = createContext<TimerContextType>({
   progress: null,
   duration: 0,
+  mainSessionDuration: convertMinuteToMillisecond(25),
   startPonmodoro: () => {
     // initial state
   },
@@ -33,6 +38,9 @@ export const TimerContext = createContext<TimerContextType>({
     // initial state
   },
   setOnFinishMainSession: () => {
+    // initial state
+  },
+  setMainSessionDuration: () => {
     // initial state
   },
 });
@@ -47,11 +55,13 @@ const PonmodoroProvider = ({
   const intervalCallback: React.MutableRefObject<
     (() => void) | undefined
   > = useRef();
-  const mainSessionDuration = 1000 * 60 * 25;
-  const breakSessionDuration = 1000 * 60 * 5;
+  const breakSessionDuration = convertMinuteToMillisecond(5);
   const maxSessionNumber = 2;
   const interval = 10;
 
+  const [mainSessionDuration, setMainSessionDuration] = useState<number>(
+    convertMinuteToMillisecond(25)
+  );
   const [progress, setProgress] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<number | null>(null);
   const [sessionNumber, setSessionNumber] = useState<number>(0);
@@ -160,6 +170,10 @@ const PonmodoroProvider = ({
     intervalCallback.current = addProgress;
   }, [addProgress]);
 
+  useEffect(() => {
+    setDuration(mainSessionDuration);
+  }, [mainSessionDuration]);
+
   return (
     <TimerContext.Provider
       value={{
@@ -167,8 +181,10 @@ const PonmodoroProvider = ({
         setOnFinishMainSession,
         setOnFinishBreak,
         setOnFinishLastSession,
+        setMainSessionDuration,
         progress,
         duration,
+        mainSessionDuration,
       }}
     >
       {children}
@@ -176,12 +192,25 @@ const PonmodoroProvider = ({
   );
 };
 
-type TimerRenderProps = {
-  strokeWidth: number;
-};
-
-const TimerRenderer = (props: TimerRenderProps): JSX.Element => {
-  const { strokeWidth } = props;
+const TimerRenderer = (): JSX.Element => {
+  const useStlyes = makeStyles({
+    circularProgressbarContainer: {
+      position: "relative",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    circularProgressBarBass: {
+      color: "#e2e2e2",
+    },
+    circularProgressBar: {
+      position: "absolute",
+    },
+    time: {
+      position: "absolute",
+    },
+  });
+  const classes = useStlyes();
   const { progress, duration } = useContext(TimerContext);
   const remainingTime =
     (progress ? (1 - progress) * duration : duration) / 1000;
@@ -194,37 +223,50 @@ const TimerRenderer = (props: TimerRenderProps): JSX.Element => {
       ? `0${Math.floor(remainingTime % 60)}`
       : Math.floor(remainingTime % 60);
   const ponmodoroProgress = progress || 0;
+  const size = 200;
+  const thickness = 2;
 
   return (
-    <CircularProgressbar
-      value={ponmodoroProgress}
-      maxValue={1}
-      text={`${minute}:${second}`}
-      strokeWidth={strokeWidth}
-      styles={buildStyles({
-        textColor: "red",
-        pathColor: "red",
-        trailColor: "black",
-        strokeLinecap: "butt",
-      })}
-    />
+    // <CircularProgressbar
+    //   value={ponmodoroProgress}
+    //   maxValue={1}
+    //   text={`${minute}:${second}`}
+    //   strokeWidth={strokeWidth}
+    //   styles={buildStyles({
+    //     textColor: "red",
+    //     pathColor: "red",
+    //     trailColor: "black",
+    //     strokeLinecap: "butt",
+    //   })}
+    // />
+    <div className={classes.circularProgressbarContainer}>
+      <CircularProgress
+        value={100}
+        variant="static"
+        size={size}
+        thickness={thickness}
+        className={classes.circularProgressBarBass}
+      />
+      <CircularProgress
+        value={ponmodoroProgress * 100}
+        variant="static"
+        size={size}
+        thickness={thickness}
+        className={classes.circularProgressBar}
+      />
+      <Typography className={classes.time}>{`${minute}:${second}`}</Typography>
+    </div>
   );
 };
 
 type CircularProps = {
-  strokeWidth: number;
   onFinishMainSession: () => void;
   onFinishBreak: () => void;
   onFinishLastSession: () => void;
 };
 
 export const CircleTimer = (props: CircularProps): JSX.Element => {
-  const {
-    strokeWidth = 5,
-    onFinishMainSession,
-    onFinishBreak,
-    onFinishLastSession,
-  } = props;
+  const { onFinishMainSession, onFinishBreak, onFinishLastSession } = props;
   const {
     setOnFinishMainSession,
     setOnFinishBreak,
@@ -253,7 +295,7 @@ export const CircleTimer = (props: CircularProps): JSX.Element => {
     }
   }, [initialized, setInitialized, init]);
 
-  return <TimerRenderer strokeWidth={strokeWidth} />;
+  return <TimerRenderer />;
 };
 
 export default PonmodoroProvider;
