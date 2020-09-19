@@ -1,4 +1,3 @@
-import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
 import React, {
   useContext,
   createContext,
@@ -11,23 +10,29 @@ import React, {
   ReactNode,
 } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import convertMinuteToMillisecond from "../../utils/convertMinuteToMillisecond";
 
 type TimerContextType = {
   progress: number | null;
   duration: number;
+  isMainSession: boolean;
   mainSessionDuration: number;
+  maxSessionNumber: number;
   startPonmodoro: () => void;
   setOnFinishBreak: Dispatch<SetStateAction<() => void>>;
   setOnFinishLastSession: Dispatch<SetStateAction<() => void>>;
   setOnFinishMainSession: Dispatch<SetStateAction<() => void>>;
   setMainSessionDuration: Dispatch<SetStateAction<number>>;
+  setMaxSessionNumber: Dispatch<SetStateAction<number>>;
 };
 
 export const TimerContext = createContext<TimerContextType>({
   progress: null,
   duration: 0,
+  isMainSession: true,
   mainSessionDuration: convertMinuteToMillisecond(25),
+  maxSessionNumber: 2,
   startPonmodoro: () => {
     // initial state
   },
@@ -43,11 +48,16 @@ export const TimerContext = createContext<TimerContextType>({
   setMainSessionDuration: () => {
     // initial state
   },
+  setMaxSessionNumber: () => {
+    // initial state
+  },
 });
 
 type PonmodoroProviderProps = {
   children: ReactNode;
 };
+
+const maximum = 1000;
 
 const PonmodoroProvider = ({
   children,
@@ -55,13 +65,11 @@ const PonmodoroProvider = ({
   const intervalCallback: React.MutableRefObject<
     (() => void) | undefined
   > = useRef();
-  const breakSessionDuration = convertMinuteToMillisecond(5);
-  const maxSessionNumber = 2;
+  const breakSessionDuration = 5;
   const interval = 10;
 
-  const [mainSessionDuration, setMainSessionDuration] = useState<number>(
-    convertMinuteToMillisecond(25)
-  );
+  const [maxSessionNumber, setMaxSessionNumber] = useState<number>(2);
+  const [mainSessionDuration, setMainSessionDuration] = useState<number>(25);
   const [progress, setProgress] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<number | null>(null);
   const [sessionNumber, setSessionNumber] = useState<number>(0);
@@ -82,10 +90,16 @@ const PonmodoroProvider = ({
     }
   );
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [duration, setDuration] = useState<number>(mainSessionDuration);
+  const [duration, setDuration] = useState<number>(
+    convertMinuteToMillisecond(mainSessionDuration)
+  );
 
   const startPonmodoro = (): void => {
     setProgress(0);
+  };
+
+  const setOptimizedDuration = (rawDuration: number) => {
+    setDuration(convertMinuteToMillisecond(rawDuration));
   };
 
   const stopTimer = useCallback(() => {
@@ -100,8 +114,16 @@ const PonmodoroProvider = ({
       ? startTime.getTime()
       : new Date().getTime();
     const elapsedTime = new Date().getTime() - startTimeStamp;
-    setProgress(elapsedTime / duration);
-  }, [duration, startTime]);
+    const calculatedRawProgress = Math.round(
+      (elapsedTime / duration) * maximum
+    );
+    const calculatedProgress =
+      calculatedRawProgress >= maximum ? maximum : calculatedRawProgress;
+    setProgress(calculatedProgress);
+    if (calculatedProgress === maximum) {
+      stopTimer();
+    }
+  }, [duration, startTime, stopTimer]);
 
   const startSession = useCallback(() => {
     setStartTime(new Date());
@@ -121,24 +143,22 @@ const PonmodoroProvider = ({
   }, [onFinishLastSession]);
 
   const onFinishSession = useCallback(() => {
-    stopTimer();
     setProgress(null);
     if (isMainSession) {
       if (sessionNumber === maxSessionNumber) {
         lastSessionHandler();
       } else {
         setIsMainSession(false);
-        setDuration(breakSessionDuration);
+        setOptimizedDuration(breakSessionDuration);
         onFinishMainSession();
         setSessionNumber((num) => num + 1);
       }
     } else {
       onFinishBreak();
       setIsMainSession(true);
-      setDuration(mainSessionDuration);
+      setOptimizedDuration(mainSessionDuration);
     }
   }, [
-    stopTimer,
     isMainSession,
     sessionNumber,
     lastSessionHandler,
@@ -146,11 +166,12 @@ const PonmodoroProvider = ({
     onFinishBreak,
     breakSessionDuration,
     mainSessionDuration,
+    maxSessionNumber,
   ]);
 
   useEffect(() => {
     const isStartingNewSession = progress === 0;
-    const isSessionDone = progress ? progress >= 1 : false;
+    const isSessionDone = progress ? progress === maximum : false;
     if (isStartingNewSession) {
       startSession();
     } else if (isSessionDone) {
@@ -171,7 +192,7 @@ const PonmodoroProvider = ({
   }, [addProgress]);
 
   useEffect(() => {
-    setDuration(mainSessionDuration);
+    setDuration(convertMinuteToMillisecond(mainSessionDuration));
   }, [mainSessionDuration]);
 
   return (
@@ -182,9 +203,12 @@ const PonmodoroProvider = ({
         setOnFinishBreak,
         setOnFinishLastSession,
         setMainSessionDuration,
+        setMaxSessionNumber,
         progress,
         duration,
+        isMainSession,
         mainSessionDuration,
+        maxSessionNumber,
       }}
     >
       {children}
@@ -193,27 +217,9 @@ const PonmodoroProvider = ({
 };
 
 const TimerRenderer = (): JSX.Element => {
-  const useStlyes = makeStyles({
-    circularProgressbarContainer: {
-      position: "relative",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    circularProgressBarBass: {
-      color: "#e2e2e2",
-    },
-    circularProgressBar: {
-      position: "absolute",
-    },
-    time: {
-      position: "absolute",
-    },
-  });
-  const classes = useStlyes();
-  const { progress, duration } = useContext(TimerContext);
+  const { progress, duration, isMainSession } = useContext(TimerContext);
   const remainingTime =
-    (progress ? (1 - progress) * duration : duration) / 1000;
+    (progress ? ((maximum - progress) / maximum) * duration : duration) / 1000;
   const minute =
     Math.floor(remainingTime / 60) < 10
       ? `0${Math.floor(remainingTime / 60)}`
@@ -223,39 +229,20 @@ const TimerRenderer = (): JSX.Element => {
       ? `0${Math.floor(remainingTime % 60)}`
       : Math.floor(remainingTime % 60);
   const ponmodoroProgress = progress || 0;
-  const size = 200;
-  const thickness = 2;
+
+  const stylesForBreak = {
+    textColor: "green",
+    pathColor: "green",
+  };
 
   return (
-    // <CircularProgressbar
-    //   value={ponmodoroProgress}
-    //   maxValue={1}
-    //   text={`${minute}:${second}`}
-    //   strokeWidth={strokeWidth}
-    //   styles={buildStyles({
-    //     textColor: "red",
-    //     pathColor: "red",
-    //     trailColor: "black",
-    //     strokeLinecap: "butt",
-    //   })}
-    // />
-    <div className={classes.circularProgressbarContainer}>
-      <CircularProgress
-        value={100}
-        variant="static"
-        size={size}
-        thickness={thickness}
-        className={classes.circularProgressBarBass}
-      />
-      <CircularProgress
-        value={ponmodoroProgress * 100}
-        variant="static"
-        size={size}
-        thickness={thickness}
-        className={classes.circularProgressBar}
-      />
-      <Typography className={classes.time}>{`${minute}:${second}`}</Typography>
-    </div>
+    <CircularProgressbar
+      value={ponmodoroProgress}
+      maxValue={maximum}
+      text={`${minute}:${second}`}
+      strokeWidth={5}
+      styles={buildStyles(!isMainSession ? stylesForBreak : {})}
+    />
   );
 };
 

@@ -6,6 +6,7 @@ import {
   makeStyles,
   MenuItem,
   Select,
+  Slider,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -22,7 +23,6 @@ import {
   TimerContext,
   CircleTimer,
 } from "../../providers/ponmodoro/PonmodoroProvider";
-import convertMinuteToMillisecond from "../../utils/convertMinuteToMillisecond";
 
 export type MatchProps = {
   todoId: string;
@@ -34,10 +34,20 @@ const useStyles = makeStyles({
   taskName: {
     fontSize: "2rem",
     marginBottom: 10,
+    wordBreak: "break-all",
   },
-  select: {
-    width: 180,
-    marginBottom: 10,
+  inputWrapper: {
+    display: "flex",
+    justifyContent: "center",
+    width: "70%",
+    margin: "5px auto 10px auto",
+  },
+  durationInput: {
+    width: 250,
+    marginRight: 20,
+  },
+  sessionNumInput: {
+    width: 100,
   },
   startButton: {
     marginTop: 10,
@@ -65,7 +75,9 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const {
     startPonmodoro,
     setMainSessionDuration,
+    setMaxSessionNumber,
     mainSessionDuration,
+    maxSessionNumber,
   } = useContext(TimerContext);
   const { openBasicModal } = useContext(ModalContext);
   const classes = useStyles();
@@ -73,6 +85,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const task = todos ? todos[todoId] : { done: false, todo: "" };
   const [done, setDone] = useState(task ? task.done : false);
   const { todo } = task || "";
+  const marks = [
+    {
+      value: 0,
+      label: "min",
+    },
+  ];
 
   useEffect(() => {
     if (task) {
@@ -112,12 +130,21 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   };
 
   const onSelectDuration = (
+    e: ChangeEvent<Record<string, unknown>>,
+    value: number | number[]
+  ) => {
+    if (typeof value === "number") {
+      setMainSessionDuration(value);
+    }
+  };
+
+  const onSelectMaxPeriod = (
     e: ChangeEvent<{
       name?: string | undefined;
       value: unknown;
     }>
   ) => {
-    setMainSessionDuration(Number(e.target.value));
+    setMaxSessionNumber(Number(e.target.value));
   };
 
   const start = () => {
@@ -149,20 +176,37 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
               <Checkbox checked={done} onChange={handleChange} />
               {todo}
             </Typography>
-            <FormControl variant="outlined" className={classes.select}>
-              <InputLabel>duration</InputLabel>
-              <Select
-                value={mainSessionDuration}
-                disabled={inputState.isDisabled}
-                labelWidth={60}
-                onChange={onSelectDuration}
+            <div className={classes.inputWrapper}>
+              <div className={classes.durationInput}>
+                <Typography>duration</Typography>
+                <Slider
+                  value={mainSessionDuration}
+                  disabled={inputState.isDisabled}
+                  onChange={onSelectDuration}
+                  max={50}
+                  min={1}
+                  valueLabelDisplay="auto"
+                  marks={marks}
+                />
+              </div>
+              <FormControl
+                variant="outlined"
+                className={classes.sessionNumInput}
               >
-                <MenuItem value={convertMinuteToMillisecond(50)}>50</MenuItem>
-                <MenuItem value={convertMinuteToMillisecond(25)}>25</MenuItem>
-                <MenuItem value={convertMinuteToMillisecond(10)}>10</MenuItem>
-                <MenuItem value={convertMinuteToMillisecond(1)}>1</MenuItem>
-              </Select>
-            </FormControl>
+                <InputLabel id="session-label">session</InputLabel>
+                <Select
+                  labelId="session-label"
+                  disabled={inputState.isDisabled}
+                  onChange={onSelectMaxPeriod}
+                  value={maxSessionNumber}
+                  label="session"
+                >
+                  <MenuItem value={0}>x1</MenuItem>
+                  <MenuItem value={1}>x2</MenuItem>
+                  <MenuItem value={2}>x3</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
             <Centering>
               <div
                 style={{
