@@ -31,10 +31,18 @@ export type MatchProps = {
 type PonmodoroPageProps = MatchProps;
 
 const useStyles = makeStyles({
+  nameWrapper: {
+    width: "95%",
+    margin: "0 auto",
+    marginBottom: 20,
+    display: "flex",
+    justifyContent: "center",
+  },
   taskName: {
     fontSize: "2rem",
-    marginBottom: 10,
     wordBreak: "break-all",
+    textAlign: "center",
+    width: "90%",
   },
   inputWrapper: {
     display: "flex",
@@ -172,10 +180,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       <Container>
         {task ? (
           <>
-            <Typography variant="h2" className={classes.taskName}>
+            <div className={classes.nameWrapper}>
               <Checkbox checked={done} onChange={handleChange} />
-              {todo}
-            </Typography>
+              <Typography variant="h2" className={classes.taskName}>
+                {todo}
+              </Typography>
+            </div>
             <div className={classes.inputWrapper}>
               <div className={classes.durationInput}>
                 <Typography>duration</Typography>
@@ -210,8 +220,8 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
             <Centering>
               <div
                 style={{
-                  width: 200,
-                  height: 200,
+                  width: 240,
+                  height: 240,
                 }}
               >
                 <CircleTimer

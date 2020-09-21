@@ -9,7 +9,10 @@ import React, {
   SetStateAction,
   ReactNode,
 } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import {
+  CircularProgressbarWithChildren,
+  buildStyles,
+} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import convertMinuteToMillisecond from "../../utils/convertMinuteToMillisecond";
 
@@ -19,6 +22,7 @@ type TimerContextType = {
   isMainSession: boolean;
   mainSessionDuration: number;
   maxSessionNumber: number;
+  sessionNumber: number;
   startPonmodoro: () => void;
   setOnFinishBreak: Dispatch<SetStateAction<() => void>>;
   setOnFinishLastSession: Dispatch<SetStateAction<() => void>>;
@@ -33,6 +37,7 @@ export const TimerContext = createContext<TimerContextType>({
   isMainSession: true,
   mainSessionDuration: convertMinuteToMillisecond(25),
   maxSessionNumber: 2,
+  sessionNumber: 0,
   startPonmodoro: () => {
     // initial state
   },
@@ -209,6 +214,7 @@ const PonmodoroProvider = ({
         isMainSession,
         mainSessionDuration,
         maxSessionNumber,
+        sessionNumber,
       }}
     >
       {children}
@@ -217,7 +223,9 @@ const PonmodoroProvider = ({
 };
 
 const TimerRenderer = (): JSX.Element => {
-  const { progress, duration, isMainSession } = useContext(TimerContext);
+  const { progress, duration, isMainSession, sessionNumber } = useContext(
+    TimerContext
+  );
   const remainingTime =
     (progress ? ((maximum - progress) / maximum) * duration : duration) / 1000;
   const minute =
@@ -231,18 +239,23 @@ const TimerRenderer = (): JSX.Element => {
   const ponmodoroProgress = progress || 0;
 
   const stylesForBreak = {
-    textColor: "green",
     pathColor: "green",
   };
 
   return (
-    <CircularProgressbar
+    <CircularProgressbarWithChildren
       value={ponmodoroProgress}
       maxValue={maximum}
-      text={`${minute}:${second}`}
       strokeWidth={5}
       styles={buildStyles(!isMainSession ? stylesForBreak : {})}
-    />
+    >
+      <div>
+        {isMainSession
+          ? `work session no.${sessionNumber + 1}`
+          : `break time: next session no.${sessionNumber + 1}`}
+      </div>
+      <div style={{ fontSize: 40 }}>{`${minute}:${second}`}</div>
+    </CircularProgressbarWithChildren>
   );
 };
 

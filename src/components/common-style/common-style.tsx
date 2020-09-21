@@ -7,8 +7,7 @@ export type StyleProps = {
 };
 
 export const Wrapper = styled.div`
-  min-height: 500px;
-  height: 100vh;
+  min-height: 100vh;
   background-image: linear-gradient(to right bottom, #f3206d, #fed636);
   position: relative;
 `;
