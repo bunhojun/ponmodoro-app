@@ -23,6 +23,7 @@ type TimerContextType = {
   mainSessionDuration: number;
   maxSessionNumber: number;
   sessionNumber: number;
+  isActive: boolean;
   startPonmodoro: () => void;
   setOnFinishBreak: Dispatch<SetStateAction<() => void>>;
   setOnFinishLastSession: Dispatch<SetStateAction<() => void>>;
@@ -36,8 +37,9 @@ export const TimerContext = createContext<TimerContextType>({
   duration: 0,
   isMainSession: true,
   mainSessionDuration: convertMinuteToMillisecond(25),
-  maxSessionNumber: 2,
-  sessionNumber: 0,
+  maxSessionNumber: 3,
+  sessionNumber: 1,
+  isActive: false,
   startPonmodoro: () => {
     // initial state
   },
@@ -62,7 +64,7 @@ type PonmodoroProviderProps = {
   children: ReactNode;
 };
 
-const maximum = 1000;
+const maximum = 100000;
 
 const PonmodoroProvider = ({
   children,
@@ -73,11 +75,12 @@ const PonmodoroProvider = ({
   const breakSessionDuration = 5;
   const interval = 10;
 
-  const [maxSessionNumber, setMaxSessionNumber] = useState<number>(2);
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [maxSessionNumber, setMaxSessionNumber] = useState<number>(3);
   const [mainSessionDuration, setMainSessionDuration] = useState<number>(25);
   const [progress, setProgress] = useState<number | null>(null);
   const [intervalId, setIntervalId] = useState<number | null>(null);
-  const [sessionNumber, setSessionNumber] = useState<number>(0);
+  const [sessionNumber, setSessionNumber] = useState<number>(1);
   const [isMainSession, setIsMainSession] = useState<boolean>(true);
   const [onFinishMainSession, setOnFinishMainSession] = useState<() => void>(
     () => (): void => {
@@ -101,6 +104,7 @@ const PonmodoroProvider = ({
 
   const startPonmodoro = (): void => {
     setProgress(0);
+    setIsActive(true);
   };
 
   const setOptimizedDuration = (rawDuration: number) => {
@@ -143,7 +147,8 @@ const PonmodoroProvider = ({
   }, [intervalId]);
 
   const lastSessionHandler = useCallback(() => {
-    setSessionNumber(0);
+    setSessionNumber(1);
+    setIsActive(false);
     onFinishLastSession();
   }, [onFinishLastSession]);
 
@@ -215,6 +220,7 @@ const PonmodoroProvider = ({
         mainSessionDuration,
         maxSessionNumber,
         sessionNumber,
+        isActive,
       }}
     >
       {children}
@@ -250,9 +256,17 @@ const TimerRenderer = (): JSX.Element => {
       styles={buildStyles(!isMainSession ? stylesForBreak : {})}
     >
       <div>
-        {isMainSession
-          ? `work session no.${sessionNumber + 1}`
-          : `break time: next session no.${sessionNumber + 1}`}
+        {isMainSession ? (
+          `work session No.${sessionNumber}`
+        ) : (
+          <>
+            <div>break time</div>
+            <div>
+              next work session number: No.
+              {sessionNumber}
+            </div>
+          </>
+        )}
       </div>
       <div style={{ fontSize: 40 }}>{`${minute}:${second}`}</div>
     </CircularProgressbarWithChildren>
