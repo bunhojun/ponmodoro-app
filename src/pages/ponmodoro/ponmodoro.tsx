@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import React, { useContext, useEffect, useState, ChangeEvent } from "react";
 import classNames from "classnames/bind";
+import { useBeforeunload } from "react-beforeunload";
 import {
   Inner,
   Container,
@@ -24,6 +25,7 @@ import {
   TimerContext,
   CircleTimer,
 } from "../../providers/ponmodoro/PonmodoroProvider";
+import HeaderComponent from "../../components/header/header";
 
 export type MatchProps = {
   todoId: string;
@@ -99,6 +101,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
     },
   ];
 
+  useBeforeunload((e) => {
+    if (isActive) {
+      e.preventDefault();
+    }
+  });
+
   useEffect(() => {
     if (task) {
       setDone(task.done);
@@ -161,87 +169,90 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   };
 
   return (
-    <Inner>
-      <Container>
-        {task ? (
-          <>
-            <div className={classes.nameWrapper}>
-              <Checkbox checked={done} onChange={handleChange} />
-              <Typography variant="h2" className={classes.taskName}>
-                {todo}
-              </Typography>
-            </div>
-            <div className={classes.inputWrapper}>
-              <div className={classes.durationInput}>
-                <Typography>duration</Typography>
-                <Slider
-                  value={mainSessionDuration}
-                  disabled={isActive}
-                  onChange={onSelectDuration}
-                  max={maximum}
-                  min={minimum}
-                  valueLabelDisplay="auto"
-                  marks={marks}
-                />
+    <>
+      <HeaderComponent />
+      <Inner>
+        <Container>
+          {task ? (
+            <>
+              <div className={classes.nameWrapper}>
+                <Checkbox checked={done} onChange={handleChange} />
+                <Typography variant="h2" className={classes.taskName}>
+                  {todo}
+                </Typography>
               </div>
-              <FormControl
-                variant="outlined"
-                className={classes.sessionNumInput}
-              >
-                <InputLabel id="session-label">session</InputLabel>
-                <Select
-                  labelId="session-label"
-                  disabled={isActive}
-                  onChange={onSelectMaxPeriod}
-                  value={maxSessionNumber}
-                  label="session"
+              <div className={classes.inputWrapper}>
+                <div className={classes.durationInput}>
+                  <Typography>duration</Typography>
+                  <Slider
+                    value={mainSessionDuration}
+                    disabled={isActive}
+                    onChange={onSelectDuration}
+                    max={maximum}
+                    min={minimum}
+                    valueLabelDisplay="auto"
+                    marks={marks}
+                  />
+                </div>
+                <FormControl
+                  variant="outlined"
+                  className={classes.sessionNumInput}
                 >
-                  <MenuItem value={0}>x1</MenuItem>
-                  <MenuItem value={1}>x2</MenuItem>
-                  <MenuItem value={2}>x3</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <Centering>
-              <div
-                style={{
-                  width: 240,
-                  height: 240,
-                }}
+                  <InputLabel id="session-label">session</InputLabel>
+                  <Select
+                    labelId="session-label"
+                    disabled={isActive}
+                    onChange={onSelectMaxPeriod}
+                    value={maxSessionNumber}
+                    label="session"
+                  >
+                    <MenuItem value={0}>x1</MenuItem>
+                    <MenuItem value={1}>x2</MenuItem>
+                    <MenuItem value={2}>x3</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+              <Centering>
+                <div
+                  style={{
+                    width: 240,
+                    height: 240,
+                  }}
+                >
+                  <CircleTimer
+                    onFinishMainSession={onMainSessionEnd}
+                    onFinishBreak={onBreakEnd}
+                    onFinishLastSession={onLastSessionEnd}
+                  />
+                </div>
+              </Centering>
+              <Button
+                type="button"
+                disabled={isActive}
+                onClick={start}
+                className={classNames(
+                  classes.startButton,
+                  isActive && classes.buttonDisabled
+                )}
               >
-                <CircleTimer
-                  onFinishMainSession={onMainSessionEnd}
-                  onFinishBreak={onBreakEnd}
-                  onFinishLastSession={onLastSessionEnd}
+                start ponmodoro
+              </Button>
+              <div className={classes.memoFieldWrapper}>
+                <TextField
+                  className={classes.memoField}
+                  label="memo"
+                  variant="outlined"
+                  multiline
+                  rows={4}
                 />
               </div>
-            </Centering>
-            <Button
-              type="button"
-              disabled={isActive}
-              onClick={start}
-              className={classNames(
-                classes.startButton,
-                isActive && classes.buttonDisabled
-              )}
-            >
-              start ponmodoro
-            </Button>
-            <div className={classes.memoFieldWrapper}>
-              <TextField
-                className={classes.memoField}
-                label="memo"
-                variant="outlined"
-                multiline
-                rows={4}
-              />
-            </div>
-          </>
-        ) : (
-          <div>todo does not exist</div>
-        )}
-      </Container>
-    </Inner>
+            </>
+          ) : (
+            <div>todo does not exist</div>
+          )}
+        </Container>
+      </Inner>
+    </>
   );
 };
 
