@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useContext, useEffect, useState, ChangeEvent } from "react";
+import classNames from "classnames/bind";
 import {
   Inner,
   Container,
@@ -59,10 +60,10 @@ const useStyles = makeStyles({
   },
   startButton: {
     marginTop: 10,
-    backgroundColor: "violet",
+    backgroundColor: "#FFB6C1",
   },
   buttonDisabled: {
-    backgroundColor: "gray",
+    backgroundColor: "#D3D3D3",
   },
   memoFieldWrapper: {
     marginTop: 10,
@@ -74,11 +75,6 @@ const useStyles = makeStyles({
 
 const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const { todoId } = props;
-  const initialInputState = {
-    isDisabled: false,
-    startButtonColor: "violet",
-  };
-  const [inputState, setInputState] = useState(initialInputState);
   const currentUser = useContext<UserType | null>(CurrentUserContext);
   const {
     startPonmodoro,
@@ -86,6 +82,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
     setMaxSessionNumber,
     mainSessionDuration,
     maxSessionNumber,
+    isActive,
   } = useContext(TimerContext);
   const { openBasicModal } = useContext(ModalContext);
   const classes = useStyles();
@@ -93,9 +90,11 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const task = todos ? todos[todoId] : { done: false, todo: "" };
   const [done, setDone] = useState(task ? task.done : false);
   const { todo } = task || "";
+  const minimum = 10;
+  const maximum = 50;
   const marks = [
     {
-      value: 0,
+      value: minimum,
       label: "min",
     },
   ];
@@ -111,25 +110,18 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       "main session done. take a 5min break"
     );
     startPonmodoro();
-    notification.onclose = () => {
-      // close handler
-    };
+    notification.onclose = () => null;
   };
 
   const onBreakEnd = () => {
     const notification = new Notification("break done. let's get back to work");
     startPonmodoro();
-    notification.onclose = () => {
-      // close handler
-    };
+    notification.onclose = () => null;
   };
 
   const onLastSessionEnd = () => {
     const notification = new Notification("last session done. well done");
-    setInputState(initialInputState);
-    notification.onclose = () => {
-      // close handler
-    };
+    notification.onclose = () => null;
   };
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,13 +155,6 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       );
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(() => {
-        setInputState((prevInputState) => {
-          return {
-            ...prevInputState,
-            isDisabled: true,
-            startButtonColor: "gray",
-          };
-        });
         startPonmodoro();
       });
     }
@@ -191,10 +176,10 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                 <Typography>duration</Typography>
                 <Slider
                   value={mainSessionDuration}
-                  disabled={inputState.isDisabled}
+                  disabled={isActive}
                   onChange={onSelectDuration}
-                  max={50}
-                  min={1}
+                  max={maximum}
+                  min={minimum}
                   valueLabelDisplay="auto"
                   marks={marks}
                 />
@@ -206,7 +191,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                 <InputLabel id="session-label">session</InputLabel>
                 <Select
                   labelId="session-label"
-                  disabled={inputState.isDisabled}
+                  disabled={isActive}
                   onChange={onSelectMaxPeriod}
                   value={maxSessionNumber}
                   label="session"
@@ -233,9 +218,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
             </Centering>
             <Button
               type="button"
-              disabled={inputState.isDisabled}
+              disabled={isActive}
               onClick={start}
-              className={classes.startButton}
+              className={classNames(
+                classes.startButton,
+                isActive && classes.buttonDisabled
+              )}
             >
               start ponmodoro
             </Button>
