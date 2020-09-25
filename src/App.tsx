@@ -4,6 +4,7 @@ import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
 import CurrentUserContext, { UserType } from "./contexts/user/UserContext";
 import SignInAndUpPage from "./pages/signInAndUp/signInAndUp";
 import HomePage from "./pages/home/home";
+import HeaderComponent from "./components/header/header";
 import { Wrapper, Inner } from "./components/common-style/common-style";
 import { auth, createUserProfileDocument } from "./firebase/firebase";
 import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
@@ -49,6 +50,7 @@ const App: FunctionComponent = () => {
     <Wrapper>
       <CurrentUserContext.Provider value={currentUser}>
         <ModalProvider>
+          <HeaderComponent />
           <Switch>
             <Route
               exact

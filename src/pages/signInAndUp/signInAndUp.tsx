@@ -9,10 +9,6 @@ import SignUpComponent from "../../components/signup/signup";
 
 const useStyles = makeStyles({
   heading: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  containerHeading: {
     fontSize: "2.5rem",
     marginBottom: 25,
   },
@@ -26,22 +22,17 @@ const SignInAndUpPage: FunctionComponent = () => {
       {currentUser && currentUser.id ? (
         <Redirect to="/" />
       ) : (
-        <>
-          <div className={classes.heading}>
-            <Typography variant="h1">PONMODORO</Typography>
-          </div>
-          <Inner>
-            <Container height="70vh">
-              <Typography variant="h2" className={classes.containerHeading}>
-                signin or signup
-              </Typography>
-              <SignInAndUpContainer>
-                <SignInComponent />
-                <SignUpComponent />
-              </SignInAndUpContainer>
-            </Container>
-          </Inner>
-        </>
+        <Inner>
+          <Container height="70vh">
+            <Typography variant="h2" className={classes.heading}>
+              signin or signup
+            </Typography>
+            <SignInAndUpContainer>
+              <SignInComponent />
+              <SignUpComponent />
+            </SignInAndUpContainer>
+          </Container>
+        </Inner>
       )}
     </>
   );

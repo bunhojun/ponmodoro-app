@@ -11,8 +11,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useContext, useEffect, useState, ChangeEvent } from "react";
-import { useBeforeunload } from "react-beforeunload";
-import classNames from "classnames/bind";
 import {
   Inner,
   Container,
@@ -25,7 +23,6 @@ import {
   TimerContext,
   CircleTimer,
 } from "../../providers/ponmodoro/PonmodoroProvider";
-import HeaderComponent from "../../components/header/header";
 
 export type MatchProps = {
   todoId: string;
@@ -65,7 +62,7 @@ const useStyles = makeStyles({
     backgroundColor: "violet",
   },
   buttonDisabled: {
-    backgroundColor: "#DCDCDC",
+    backgroundColor: "gray",
   },
   memoFieldWrapper: {
     marginTop: 10,
@@ -89,7 +86,6 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
     setMaxSessionNumber,
     mainSessionDuration,
     maxSessionNumber,
-    isActive,
   } = useContext(TimerContext);
   const { openBasicModal } = useContext(ModalContext);
   const classes = useStyles();
@@ -109,12 +105,6 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
       setDone(task.done);
     }
   }, [task]);
-
-  useBeforeunload((e) => {
-    if (isActive) {
-      e.preventDefault();
-    }
-  });
 
   const onMainSessionEnd = () => {
     const notification = new Notification(
@@ -177,7 +167,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
           return {
             ...prevInputState,
             isDisabled: true,
-            startButtonColor: "#808080",
+            startButtonColor: "gray",
           };
         });
         startPonmodoro();
@@ -186,90 +176,84 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   };
 
   return (
-    <>
-      <HeaderComponent />
-      <Inner>
-        <Container>
-          {task ? (
-            <>
-              <div className={classes.nameWrapper}>
-                <Checkbox checked={done} onChange={handleChange} />
-                <Typography variant="h2" className={classes.taskName}>
-                  {todo}
-                </Typography>
-              </div>
-              <div className={classes.inputWrapper}>
-                <div className={classes.durationInput}>
-                  <Typography>duration</Typography>
-                  <Slider
-                    value={mainSessionDuration}
-                    disabled={inputState.isDisabled}
-                    onChange={onSelectDuration}
-                    max={50}
-                    min={1}
-                    valueLabelDisplay="auto"
-                    marks={marks}
-                  />
-                </div>
-                <FormControl
-                  variant="outlined"
-                  className={classes.sessionNumInput}
-                >
-                  <InputLabel id="session-label">repeat</InputLabel>
-                  <Select
-                    labelId="session-label"
-                    disabled={inputState.isDisabled}
-                    onChange={onSelectMaxPeriod}
-                    value={maxSessionNumber}
-                    label="repeat"
-                  >
-                    <MenuItem value={1}>x1</MenuItem>
-                    <MenuItem value={2}>x2</MenuItem>
-                    <MenuItem value={3}>x3</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <Centering>
-                <div
-                  style={{
-                    width: 260,
-                    height: 260,
-                  }}
-                >
-                  <CircleTimer
-                    onFinishMainSession={onMainSessionEnd}
-                    onFinishBreak={onBreakEnd}
-                    onFinishLastSession={onLastSessionEnd}
-                  />
-                </div>
-              </Centering>
-              <Button
-                type="button"
-                disabled={inputState.isDisabled}
-                onClick={start}
-                className={classNames(
-                  classes.startButton,
-                  inputState.isDisabled && classes.buttonDisabled
-                )}
-              >
-                start ponmodoro
-              </Button>
-              <div className={classes.memoFieldWrapper}>
-                <TextField
-                  className={classes.memoField}
-                  label="memo"
-                  variant="outlined"
-                  multiline
-                  rows={4}
+    <Inner>
+      <Container>
+        {task ? (
+          <>
+            <div className={classes.nameWrapper}>
+              <Checkbox checked={done} onChange={handleChange} />
+              <Typography variant="h2" className={classes.taskName}>
+                {todo}
+              </Typography>
+            </div>
+            <div className={classes.inputWrapper}>
+              <div className={classes.durationInput}>
+                <Typography>duration</Typography>
+                <Slider
+                  value={mainSessionDuration}
+                  disabled={inputState.isDisabled}
+                  onChange={onSelectDuration}
+                  max={50}
+                  min={1}
+                  valueLabelDisplay="auto"
+                  marks={marks}
                 />
               </div>
-            </>
-          ) : (
-            <div>todo does not exist</div>
-          )}
-        </Container>
-      </Inner>
-    </>
+              <FormControl
+                variant="outlined"
+                className={classes.sessionNumInput}
+              >
+                <InputLabel id="session-label">session</InputLabel>
+                <Select
+                  labelId="session-label"
+                  disabled={inputState.isDisabled}
+                  onChange={onSelectMaxPeriod}
+                  value={maxSessionNumber}
+                  label="session"
+                >
+                  <MenuItem value={0}>x1</MenuItem>
+                  <MenuItem value={1}>x2</MenuItem>
+                  <MenuItem value={2}>x3</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            <Centering>
+              <div
+                style={{
+                  width: 240,
+                  height: 240,
+                }}
+              >
+                <CircleTimer
+                  onFinishMainSession={onMainSessionEnd}
+                  onFinishBreak={onBreakEnd}
+                  onFinishLastSession={onLastSessionEnd}
+                />
+              </div>
+            </Centering>
+            <Button
+              type="button"
+              disabled={inputState.isDisabled}
+              onClick={start}
+              className={classes.startButton}
+            >
+              start ponmodoro
+            </Button>
+            <div className={classes.memoFieldWrapper}>
+              <TextField
+                className={classes.memoField}
+                label="memo"
+                variant="outlined"
+                multiline
+                rows={4}
+              />
+            </div>
+          </>
+        ) : (
+          <div>todo does not exist</div>
+        )}
+      </Container>
+    </Inner>
   );
 };
 
