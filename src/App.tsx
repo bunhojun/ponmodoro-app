@@ -9,6 +9,7 @@ import { auth, createUserProfileDocument } from "./firebase/firebase";
 import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
 import PonmodoroProvider from "./providers/ponmodoro/PonmodoroProvider";
 import ModalProvider from "./providers/modal/ModalProvider";
+import ProgressProvider from "./providers/progress/ProgressProvider";
 
 const App: FunctionComponent = () => {
   const currentUserStorage =
@@ -69,7 +70,14 @@ const App: FunctionComponent = () => {
                 )
               }
             />
-            <Route path="/signin" component={SignInAndUpPage} />
+            <Route
+              path="/signin"
+              render={() => (
+                <ProgressProvider>
+                  <SignInAndUpPage />
+                </ProgressProvider>
+              )}
+            />
           </Switch>
         </ModalProvider>
       </CurrentUserContext.Provider>

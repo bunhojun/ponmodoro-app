@@ -10,6 +10,7 @@ import { Form } from "../common-style/common-style";
 import { auth, signInWithGoogle } from "../../firebase/firebase";
 import { ModalContext } from "../../providers/modal/ModalProvider";
 import validateEmail from "../../utils/validateEmail";
+import { ProgressContext } from "../../providers/progress/ProgressProvider";
 
 const useStyles = makeStyles({
   textInput: {
@@ -32,6 +33,7 @@ const SignInComponent: FunctionComponent = () => {
     password: "",
   });
   const { openBasicModal } = useContext(ModalContext);
+  const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
 
   const [emailErrorState, setEmailErrorState] = useState({
     error: false,
@@ -68,9 +70,11 @@ const SignInComponent: FunctionComponent = () => {
     }
 
     try {
+      showProgressBar();
       await auth.signInWithEmailAndPassword(email, password);
       setInfo({ email: "", password: "" });
     } catch (err) {
+      closeProgressBar();
       openBasicModal(errorMessageTitle, err.message);
     }
   };
@@ -95,8 +99,10 @@ const SignInComponent: FunctionComponent = () => {
   const handleGoogleSignIn = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
+      showProgressBar();
       signInWithGoogle();
     } catch (err) {
+      closeProgressBar();
       openBasicModal(errorMessageTitle, err.message);
     }
   };

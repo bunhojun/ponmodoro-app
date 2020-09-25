@@ -10,6 +10,7 @@ import { Form } from "../common-style/common-style";
 import { auth, createUserProfileDocument } from "../../firebase/firebase";
 import validateEmail from "../../utils/validateEmail";
 import { ModalContext } from "../../providers/modal/ModalProvider";
+import { ProgressContext } from "../../providers/progress/ProgressProvider";
 
 const useStyles = makeStyles({
   textInput: {
@@ -36,6 +37,7 @@ const SignUpComponent: FunctionComponent = () => {
   const { displayName, email, password, confirmPassword } = info;
   const classes = useStyles();
   const { openBasicModal } = useContext(ModalContext);
+  const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
   const [displayNameErrorState, setDisplayNameErrorState] = useState(false);
   const [emailErrorState, setEmailErrorState] = useState({
     error: false,
@@ -129,6 +131,7 @@ const SignUpComponent: FunctionComponent = () => {
     }
 
     try {
+      showProgressBar();
       const { user } = await auth.createUserWithEmailAndPassword(
         email,
         password
@@ -143,6 +146,7 @@ const SignUpComponent: FunctionComponent = () => {
         confirmPassword: "",
       });
     } catch (err) {
+      closeProgressBar();
       openBasicModal("error occurred while signing up", err.message);
     }
   };
