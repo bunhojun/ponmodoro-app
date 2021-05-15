@@ -1,4 +1,4 @@
-import React, { useContext, FunctionComponent } from "react";
+import React, { useContext } from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 import ListComponent from "../../components/list/list";
 import { Inner, Container } from "../../components/common-style/common-style";
@@ -11,7 +11,7 @@ const useStyles = makeStyles({
   },
 });
 
-const HomePage: FunctionComponent = () => {
+const HomePage = () => {
   const currentUSer = useContext(CurrentUserContext);
   const classes = useStyles();
   return (

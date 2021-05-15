@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { TextField, Button, makeStyles, Typography } from "@material-ui/core";
 import { Form } from "../common-style/common-style";
 import useSignin from "./useSignin";
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SignInComponent: FunctionComponent = () => {
+const SignInComponent = () => {
   const classes = useStyles();
   const {
     info,

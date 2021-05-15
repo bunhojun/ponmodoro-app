@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { Checkbox, IconButton, makeStyles, TextField } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import usePonmodoroForm from "./usePonmodoroForm";
@@ -17,7 +17,7 @@ const useStyles = makeStyles({
   },
 });
 
-const PonmodoroFormComponent: FunctionComponent = () => {
+const PonmodoroFormComponent = () => {
   const classes = useStyles();
   const { todo, isErroneous, handleChange, handleSubmit } = usePonmodoroForm();
 

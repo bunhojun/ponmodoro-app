@@ -7,7 +7,7 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { Prompt } from "react-router-dom";
 import useHeader from "./useHeader";
 
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const HeaderComponent: FunctionComponent = () => {
+const HeaderComponent = () => {
   const classes = useStyles();
   const {
     isActive,

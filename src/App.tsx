@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
 import CurrentUserContext, { UserType } from "./contexts/user/UserContext";
@@ -11,7 +11,7 @@ import PonmodoroProvider from "./providers/ponmodoro/PonmodoroProvider";
 import ModalProvider from "./providers/modal/ModalProvider";
 import ProgressProvider from "./providers/progress/ProgressProvider";
 
-const App: FunctionComponent = () => {
+const App = () => {
   const currentUserStorage =
     JSON.parse(localStorage.getItem("currentUser") || '{"":""}') || {};
   const [currentUser, setCurrentUser] = useState<UserType>(currentUserStorage);

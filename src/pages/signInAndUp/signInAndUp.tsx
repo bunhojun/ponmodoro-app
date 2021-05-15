@@ -1,4 +1,4 @@
-import React, { useContext, FunctionComponent } from "react";
+import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { makeStyles, Typography } from "@material-ui/core";
 import CurrentUserContext from "../../contexts/user/UserContext";
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SignInAndUpPage: FunctionComponent = () => {
+const SignInAndUpPage = () => {
   const currentUser = useContext(CurrentUserContext);
   const classes = useStyles();
   return (

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import {
   FormControlLabel,
   InputBase,
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ListComponent: FunctionComponent = () => {
+const ListComponent = () => {
   const classes = useStyles();
   const { sortedTodoArray, onSearch, onChangeSortCondition } = useList();
 
