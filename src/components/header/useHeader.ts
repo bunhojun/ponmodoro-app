@@ -5,7 +5,6 @@ import { ModalContext } from "../../providers/modal/ModalProvider";
 import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
 
 const useHeader = () => {
-  console.log("aaa");
   const { openConfirmationModal } = useContext(ModalContext);
   const { isActive } = useContext(TimerContext);
   const [isAbleToShowDrawer, setIsAbleToShowDrawer] = useState(false);
