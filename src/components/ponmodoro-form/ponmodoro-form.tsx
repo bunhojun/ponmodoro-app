@@ -1,14 +1,7 @@
-import React, {
-  useState,
-  useContext,
-  ChangeEvent,
-  MouseEvent,
-  FunctionComponent,
-} from "react";
+import React, { FunctionComponent } from "react";
 import { Checkbox, IconButton, makeStyles, TextField } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import CurrentUserContext from "../../contexts/user/UserContext";
-import { addTodo } from "../../firebase/firebase";
+import usePonmodoroForm from "./usePonmodoroForm";
 
 const useStyles = makeStyles({
   form: {
@@ -25,25 +18,8 @@ const useStyles = makeStyles({
 });
 
 const PonmodoroFormComponent: FunctionComponent = () => {
-  const [todo, setTodo] = useState("");
-  const [isErroneous, setIsErroneous] = useState(false);
   const classes = useStyles();
-  const currentUser = useContext(CurrentUserContext);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsErroneous(false);
-    setTodo(e.target.value);
-  };
-
-  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (!todo) {
-      setIsErroneous(true);
-      return;
-    }
-    await addTodo(todo, currentUser);
-    setTodo("");
-  };
+  const { todo, isErroneous, handleChange, handleSubmit } = usePonmodoroForm();
 
   return (
     <form className={classes.form}>

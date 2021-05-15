@@ -9,15 +9,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import CancelIcon from "@material-ui/icons/Cancel";
-import React, { useContext, ChangeEvent, useState, useEffect } from "react";
+import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import {
-  updateTodo,
-  deleteTodo,
-  changeCompletionStatus,
-} from "../../firebase/firebase";
-import CurrentUserContext, { TodoType } from "../../contexts/user/UserContext";
-import { ModalContext } from "../../providers/modal/ModalProvider";
+import { TodoType } from "../../contexts/user/UserContext";
+import useItem from "./useItem";
 
 const useStyles = makeStyles({
   listItem: {
@@ -55,62 +50,20 @@ interface ItemComponentProps extends RouteComponentProps {
 }
 
 const ItemComponent = (props: ItemComponentProps): JSX.Element => {
-  const currentUser = useContext(CurrentUserContext);
-  const { openConfirmationModal } = useContext(ModalContext);
-  const { task } = props;
-  const defaultTodo = task[1].todo;
-  const [todo, setTodo] = useState(task[1].todo);
-  const [done, setDone] = useState(task[1].done);
-  const todoId = task[0];
   const classes = useStyles();
-  const [isEditing, setIsEditing] = useState(false);
-
-  useEffect(() => {
-    setDone(task[1].done);
-    setTodo(task[1].todo);
-  }, [task]);
-
-  const changeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    await changeCompletionStatus(todoId, currentUser);
-  };
-
-  const deleteHandler = () => {
-    openConfirmationModal(
-      "deleting a task",
-      "Do you want to delete this task?",
-      () => {
-        deleteTodo(todoId, currentUser);
-      }
-    );
-  };
-
-  const onChangeTextInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setTodo(e.target.value);
-  };
-
-  const onClickEditButton = () => {
-    setIsEditing(true);
-  };
-
-  const onClickSaveButton = () => {
-    if (currentUser) {
-      updateTodo(
-        todoId,
-        {
-          done,
-          todo,
-        },
-        currentUser
-      );
-    }
-    setIsEditing(false);
-  };
-
-  const onClickCancelButton = () => {
-    setTodo(defaultTodo);
-    setIsEditing(false);
-  };
+  const { task } = props;
+  const {
+    isEditing,
+    todo,
+    done,
+    todoId,
+    changeHandler,
+    deleteHandler,
+    onChangeTextInput,
+    onClickEditButton,
+    onClickSaveButton,
+    onClickCancelButton,
+  } = useItem(task);
 
   return (
     <li>

@@ -35,6 +35,7 @@ module.exports = {
               "tsx": "never"
             }
         ],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "prettier/prettier": [
           "error",
           {

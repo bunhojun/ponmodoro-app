@@ -10,22 +10,16 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import React, { useContext, useEffect, useState, ChangeEvent } from "react";
+import React from "react";
 import classNames from "classnames/bind";
-import { useBeforeunload } from "react-beforeunload";
 import {
   Inner,
   Container,
   Centering,
 } from "../../components/common-style/common-style";
-import CurrentUserContext, { UserType } from "../../contexts/user/UserContext";
-import { changeCompletionStatus } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
-import {
-  TimerContext,
-  CircleTimer,
-} from "../../providers/ponmodoro/PonmodoroProvider";
+import { CircleTimer } from "../../providers/ponmodoro/PonmodoroProvider";
 import HeaderComponent from "../../components/header/header";
+import usePonmodoro from "./usePonmodoro";
 
 export type MatchProps = {
   todoId: string;
@@ -77,96 +71,25 @@ const useStyles = makeStyles({
 
 const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const { todoId } = props;
-  const currentUser = useContext<UserType | null>(CurrentUserContext);
+  const classes = useStyles();
   const {
-    startPonmodoro,
-    setMainSessionDuration,
-    setMaxSessionNumber,
+    task,
+    isActive,
     mainSessionDuration,
     maxSessionNumber,
-    isActive,
-  } = useContext(TimerContext);
-  const { openBasicModal } = useContext(ModalContext);
-  const classes = useStyles();
-  const { todos } = currentUser || { "": { done: false, todo: "" } };
-  const task = todos ? todos[todoId] : { done: false, todo: "" };
-  const [done, setDone] = useState(task ? task.done : false);
-  const { todo } = task || "";
-  const minimum = 10;
-  const maximum = 50;
-  const marks = [
-    {
-      value: minimum,
-      label: "min",
-    },
-  ];
-
-  useBeforeunload((e) => {
-    if (isActive) {
-      e.preventDefault();
-    }
-  });
-
-  useEffect(() => {
-    if (task) {
-      setDone(task.done);
-    }
-  }, [task]);
-
-  const onMainSessionEnd = () => {
-    const notification = new Notification(
-      "main session done. take a 5min break"
-    );
-    startPonmodoro();
-    notification.onclose = () => null;
-  };
-
-  const onBreakEnd = () => {
-    const notification = new Notification("break done. let's get back to work");
-    startPonmodoro();
-    notification.onclose = () => null;
-  };
-
-  const onLastSessionEnd = () => {
-    const notification = new Notification("last session done. well done");
-    notification.onclose = () => null;
-  };
-
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    await changeCompletionStatus(todoId, currentUser);
-  };
-
-  const onSelectDuration = (
-    e: ChangeEvent<Record<string, unknown>>,
-    value: number | number[]
-  ) => {
-    if (typeof value === "number") {
-      setMainSessionDuration(value);
-    }
-  };
-
-  const onSelectMaxPeriod = (
-    e: ChangeEvent<{
-      name?: string | undefined;
-      value: unknown;
-    }>
-  ) => {
-    setMaxSessionNumber(Number(e.target.value));
-  };
-
-  const start = () => {
-    if (!("Notification" in window)) {
-      openBasicModal(
-        "browser incompatible",
-        "This browser does not support desktop notification"
-      );
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(() => {
-        startPonmodoro();
-      });
-    }
-  };
+    done,
+    todo,
+    maximum,
+    minimum,
+    marks,
+    onMainSessionEnd,
+    onBreakEnd,
+    onLastSessionEnd,
+    handleChange,
+    onSelectDuration,
+    onSelectMaxPeriod,
+    start,
+  } = usePonmodoro(todoId);
 
   return (
     <>

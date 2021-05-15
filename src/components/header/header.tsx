@@ -7,11 +7,9 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import React, { useContext, FunctionComponent, useState } from "react";
-import { Prompt, useHistory } from "react-router-dom";
-import { deleteAccount, signOut } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
-import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
+import React, { FunctionComponent } from "react";
+import { Prompt } from "react-router-dom";
+import useHeader from "./useHeader";
 
 const useStyles = makeStyles(() => ({
   navBar: {
@@ -20,37 +18,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 const HeaderComponent: FunctionComponent = () => {
-  const { openConfirmationModal } = useContext(ModalContext);
-  const { isActive } = useContext(TimerContext);
-  const [isAbleToShowDrawer, setIsAbleToShowDrawer] = useState(false);
-  const history = useHistory();
   const classes = useStyles();
-
-  const onClickSignOut = () => {
-    setIsAbleToShowDrawer(false);
-    openConfirmationModal("Sign out", "Do you want to sign out?", signOut);
-  };
-
-  const onClickDeleteAccount = () => {
-    setIsAbleToShowDrawer(false);
-    openConfirmationModal(
-      "delete account",
-      "Do you want to delete this account?",
-      deleteAccount
-    );
-  };
-
-  const onClickMenuIcon = () => {
-    setIsAbleToShowDrawer(true);
-  };
-
-  const onClickLink = () => {
-    history.push("/");
-  };
-
-  const closeDrawer = () => {
-    setIsAbleToShowDrawer(false);
-  };
+  const {
+    isActive,
+    isAbleToShowDrawer,
+    onClickSignOut,
+    onClickDeleteAccount,
+    onClickMenuIcon,
+    onClickLink,
+    closeDrawer,
+  } = useHeader();
 
   return (
     <AppBar position="static" className={classes.navBar}>
