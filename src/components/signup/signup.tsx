@@ -1,15 +1,12 @@
 import React from "react";
-import { Button, makeStyles, TextField, Typography } from "@material-ui/core";
+import { Button, makeStyles, Typography } from "@material-ui/core";
+import { useForm } from "react-hook-form";
 import { Form } from "../common-style/common-style";
 import useSignup from "./useSignup";
+import EMAIL_PATTERN from "../../constants/email-pattern";
+import StatefulTextInput from "../stateful-text-input/stateful-text-input";
 
 const useStyles = makeStyles({
-  textInput: {
-    margin: "5px 0",
-    "& input": {
-      padding: "10px 8px",
-    },
-  },
   signUp: {
     backgroundColor: "#000",
   },
@@ -20,71 +17,65 @@ const useStyles = makeStyles({
 
 const SignUpComponent = () => {
   const classes = useStyles();
-  const {
-    email,
-    displayName,
-    password,
-    confirmPassword,
-    displayNameErrorState,
-    emailErrorState,
-    passwordErrorState,
-    confirmPasswordErrorState,
-    handleChange,
-    handleSubmit,
-  } = useSignup();
+  const { signUp } = useSignup();
+  const { control, handleSubmit, watch } = useForm();
+
+  const onValid = () => {
+    const email = watch("signupEmail");
+    const password = watch("signupPassword");
+    const displayName = watch("displayName");
+    signUp(email, password, displayName);
+  };
+
+  const onSubmit = () => {
+    handleSubmit(onValid)();
+  };
 
   return (
     <Form>
       <Typography variant="h3" className={classes.heading}>
         Signup
       </Typography>
-      <TextField
-        variant="outlined"
+      <StatefulTextInput
         type="text"
-        placeholder="user name"
+        rules={{ required: "User name is required" }}
         name="displayName"
-        value={displayName}
-        onChange={handleChange}
-        className={classes.textInput}
-        error={displayNameErrorState}
-        helperText={displayNameErrorState && "User name is required"}
+        control={control}
+        placeholder="user name"
       />
-      <TextField
-        variant="outlined"
+      <StatefulTextInput
         type="email"
+        rules={{
+          required: "Email address is required",
+          pattern: {
+            value: EMAIL_PATTERN,
+            message: "Email address is invalid",
+          },
+        }}
+        name="signupEmail"
+        control={control}
         placeholder="email"
-        name="email"
-        value={email}
-        onChange={handleChange}
-        className={classes.textInput}
-        error={emailErrorState.error}
-        helperText={emailErrorState.message}
       />
-      <TextField
-        variant="outlined"
+      <StatefulTextInput
         type="password"
+        rules={{ required: "Password is required" }}
+        name="signupPassword"
+        control={control}
         placeholder="password"
-        name="password"
-        value={password}
-        onChange={handleChange}
-        className={classes.textInput}
-        error={passwordErrorState}
-        helperText={passwordErrorState && "Password is required"}
       />
-      <TextField
-        variant="outlined"
+      <StatefulTextInput
         type="password"
-        placeholder="confirm password"
+        rules={{
+          validate: (confirmPassword: string) =>
+            confirmPassword === watch("signupPassword") ||
+            "The confirmation password you provided does not match with the password",
+        }}
         name="confirmPassword"
-        value={confirmPassword}
-        onChange={handleChange}
-        className={classes.textInput}
-        error={confirmPasswordErrorState.error}
-        helperText={confirmPasswordErrorState.message}
+        control={control}
+        placeholder="confirm password"
       />
       <Button
-        type="submit"
-        onClick={handleSubmit}
+        onClick={onSubmit}
         color="primary"
         variant="contained"
         className={classes.signUp}
