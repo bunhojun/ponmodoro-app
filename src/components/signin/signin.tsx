@@ -1,15 +1,11 @@
 import React from "react";
-import { TextField, Button, makeStyles, Typography } from "@material-ui/core";
+import { Button, makeStyles, Typography } from "@material-ui/core";
 import { Form } from "../common-style/common-style";
 import useSignin from "./useSignin";
+import StatefulTextInput from "../stateful-text-input/stateful-text-input";
+import { useForm } from "react-hook-form";
 
 const useStyles = makeStyles({
-  textInput: {
-    margin: "5px 0",
-    "& input": {
-      padding: "10px 8px",
-    },
-  },
   thirdPartySignInButton: {
     marginTop: 5,
   },
@@ -20,14 +16,18 @@ const useStyles = makeStyles({
 
 const SignInComponent = () => {
   const classes = useStyles();
-  const {
-    info,
-    emailErrorState,
-    passwordErrorState,
-    handleSubmit,
-    handleChange,
-    handleGoogleSignIn,
-  } = useSignin();
+  const { signIn, handleGoogleSignIn } = useSignin();
+  const { control, watch, handleSubmit } = useForm();
+
+  const onValid = () => {
+    const email = watch("signinEmail");
+    const password = watch("signinPassword");
+    signIn(email, password);
+  };
+
+  const onSubmit = () => {
+    handleSubmit(onValid)();
+  };
 
   return (
     <>
@@ -35,38 +35,24 @@ const SignInComponent = () => {
         <Typography variant="h3" className={classes.heading}>
           Signin
         </Typography>
-        <TextField
-          variant="outlined"
-          className={classes.textInput}
+        <StatefulTextInput
           type="email"
+          rules={{ required: "Email is required" }}
+          name="signinEmail"
+          control={control}
           placeholder="email"
-          name="email"
-          value={info.email}
-          onChange={handleChange}
-          error={emailErrorState.error}
-          helperText={emailErrorState.message}
         />
-        <TextField
-          variant="outlined"
-          className={classes.textInput}
+        <StatefulTextInput
           type="password"
+          rules={{ required: "Password is required" }}
+          name="signinPassword"
+          control={control}
           placeholder="password"
-          name="password"
-          value={info.password}
-          onChange={handleChange}
-          error={passwordErrorState}
-          helperText={passwordErrorState && "provide your password"}
         />
-        <Button
-          type="submit"
-          onClick={handleSubmit}
-          color="primary"
-          variant="contained"
-        >
+        <Button onClick={onSubmit} color="primary" variant="contained">
           Sign In
         </Button>
         <Button
-          type="submit"
           onClick={handleGoogleSignIn}
           className={classes.thirdPartySignInButton}
           color="secondary"

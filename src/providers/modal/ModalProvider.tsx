@@ -63,9 +63,8 @@ const ModalProvider = ({ children }: ModalProviderProps): JSX.Element => {
   const [basicModalState, setBasicModalState] = useState<ModalStateType>(
     defaultBasicModalState
   );
-  const [confirmationModalState, setConfirmationModalState] = useState<
-    ConfirmationModalStateType
-  >(defaultConfirmationModalState);
+  const [confirmationModalState, setConfirmationModalState] =
+    useState<ConfirmationModalStateType>(defaultConfirmationModalState);
 
   const openBasicModal = (
     basicModalTitle: string | null,
