@@ -57,24 +57,25 @@ const maximum = 10000;
 const PonmodoroProvider = ({
   children,
 }: PonmodoroProviderProps): JSX.Element => {
-  const intervalCallback: React.MutableRefObject<
-    (() => void) | undefined
-  > = useRef();
+  const intervalCallback: React.MutableRefObject<(() => void) | undefined> =
+    useRef();
   const breakSessionDuration = 5;
   const interval = 10;
 
   const [maxSessionNumber, setMaxSessionNumber] = useState<number>(2);
   const [mainSessionDuration, setMainSessionDuration] = useState<number>(25);
   const [progress, setProgress] = useState<number | null>(null);
-  const [intervalId, setIntervalId] = useState<number | null>(null);
+  const [intervalId, setIntervalId] = useState<number | NodeJS.Timeout | null>(
+    null
+  );
   const [sessionNumber, setSessionNumber] = useState<number>(0);
   const [isMainSession, setIsMainSession] = useState<boolean>(true);
   const [isActive, setIsActive] = useState<boolean>(false);
   const [onFinishMainSession, setOnFinishMainSession] = useState<() => void>(
     () => () => null
   );
-  const [onFinishBreak, setOnFinishBreak] = useState<() => void>(() => () =>
-    null
+  const [onFinishBreak, setOnFinishBreak] = useState<() => void>(
+    () => () => null
   );
   const [onFinishLastSession, setOnFinishLastSession] = useState<() => void>(
     () => () => null
@@ -95,7 +96,7 @@ const PonmodoroProvider = ({
 
   const stopTimer = useCallback(() => {
     if (intervalId) {
-      clearInterval(intervalId);
+      clearInterval(intervalId as number);
     }
     setIntervalId(null);
   }, [intervalId]);
@@ -174,7 +175,7 @@ const PonmodoroProvider = ({
   useEffect(() => {
     return () => {
       if (intervalId) {
-        clearInterval(intervalId);
+        clearInterval(intervalId as number);
       }
     };
   }, [intervalId]);
@@ -211,9 +212,8 @@ const PonmodoroProvider = ({
 };
 
 const TimerRenderer = (): JSX.Element => {
-  const { progress, duration, isMainSession, sessionNumber } = useContext(
-    TimerContext
-  );
+  const { progress, duration, isMainSession, sessionNumber } =
+    useContext(TimerContext);
   const remainingTime =
     (progress ? ((maximum - progress) / maximum) * duration : duration) / 1000;
   const minute =
@@ -259,11 +259,8 @@ type CircularProps = {
 
 export const CircleTimer = (props: CircularProps): JSX.Element => {
   const { onFinishMainSession, onFinishBreak, onFinishLastSession } = props;
-  const {
-    setOnFinishMainSession,
-    setOnFinishBreak,
-    setOnFinishLastSession,
-  } = useContext(TimerContext);
+  const { setOnFinishMainSession, setOnFinishBreak, setOnFinishLastSession } =
+    useContext(TimerContext);
   const [initialized, setInitialized] = useState<boolean>(false);
 
   const init = useCallback(() => {
