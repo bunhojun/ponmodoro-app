@@ -14,6 +14,7 @@ const useSignin = () => {
       await auth.signInWithEmailAndPassword(email, password);
     } catch (err) {
       closeProgressBar();
+      // @ts-ignore
       openBasicModal(errorMessageTitle, err.message);
     }
   };
@@ -24,6 +25,7 @@ const useSignin = () => {
       signInWithGoogle();
     } catch (err) {
       closeProgressBar();
+      // @ts-ignore
       openBasicModal(errorMessageTitle, err.message);
     }
   };

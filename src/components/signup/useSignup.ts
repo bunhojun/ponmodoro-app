@@ -22,6 +22,7 @@ const useSignup = () => {
       await createUserProfileDocument(user, { displayName });
     } catch (err) {
       closeProgressBar();
+      // @ts-ignore
       openBasicModal("error occurred while signing up", err.message);
     }
   };
