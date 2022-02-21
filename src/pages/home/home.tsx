@@ -12,15 +12,15 @@ const useStyles = makeStyles({
 });
 
 const HomePage = () => {
-  const currentUSer = useContext(CurrentUserContext);
+  const currentUser = useContext(CurrentUserContext);
   const classes = useStyles();
   return (
     <>
       <HeaderComponent />
       <Inner height="75vh" minHeight="400px">
         <Typography variant="h2" className={classes.heading}>
-          {currentUSer
-            ? `${currentUSer.displayName}'s todo`
+          {currentUser
+            ? `${currentUser.displayName}'s todo`
             : "the user does not exist"}
         </Typography>
         <Container height="80%">
