@@ -8,7 +8,6 @@ import { Wrapper, Inner } from "./components/common-style/common-style";
 import { auth, createUserProfileDocument } from "./firebase/firebase";
 import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
 import PonmodoroProvider from "./providers/ponmodoro/PonmodoroProvider";
-import ModalProvider from "./providers/modal/ModalProvider";
 import ProgressProvider from "./providers/progress/ProgressProvider";
 
 const App = () => {
@@ -49,37 +48,35 @@ const App = () => {
   return (
     <Wrapper>
       <CurrentUserContext.Provider value={currentUser}>
-        <ModalProvider>
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render={() =>
-                currentUser.id ? <HomePage /> : <Redirect to="/signin" />
-              }
-            />
-            <Route
-              path="/ponmodoro/:todoId"
-              render={(props: RouteComponentProps<MatchProps>) =>
-                currentUser.id ? (
-                  <PonmodoroProvider>
-                    <PonmodoroPage todoId={props.match.params.todoId} />
-                  </PonmodoroProvider>
-                ) : (
-                  <Redirect to="/signin" />
-                )
-              }
-            />
-            <Route
-              path="/signin"
-              render={() => (
-                <ProgressProvider>
-                  <SignInAndUpPage />
-                </ProgressProvider>
-              )}
-            />
-          </Switch>
-        </ModalProvider>
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={() =>
+              currentUser.id ? <HomePage /> : <Redirect to="/signin" />
+            }
+          />
+          <Route
+            path="/ponmodoro/:todoId"
+            render={(props: RouteComponentProps<MatchProps>) =>
+              currentUser.id ? (
+                <PonmodoroProvider>
+                  <PonmodoroPage todoId={props.match.params.todoId} />
+                </PonmodoroProvider>
+              ) : (
+                <Redirect to="/signin" />
+              )
+            }
+          />
+          <Route
+            path="/signin"
+            render={() => (
+              <ProgressProvider>
+                <SignInAndUpPage />
+              </ProgressProvider>
+            )}
+          />
+        </Switch>
       </CurrentUserContext.Provider>
       <footer>
         <Inner>&#169; Hojun Bun</Inner>

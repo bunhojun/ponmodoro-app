@@ -1,27 +1,30 @@
 import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { deleteAccount, signOut } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
 import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
+import { OpenConfirmationModal } from "../modal/useModal";
 
-const useHeader = () => {
-  const { openConfirmationModal } = useContext(ModalContext);
+const useHeader = (openModal: OpenConfirmationModal) => {
   const { isActive } = useContext(TimerContext);
   const [isAbleToShowDrawer, setIsAbleToShowDrawer] = useState(false);
   const history = useHistory();
 
   const onClickSignOut = () => {
     setIsAbleToShowDrawer(false);
-    openConfirmationModal("Sign out", "Do you want to sign out?", signOut);
+    openModal({
+      title: "Sign out",
+      message: "Do you want to sign out?",
+      onApprove: signOut,
+    });
   };
 
   const onClickDeleteAccount = () => {
     setIsAbleToShowDrawer(false);
-    openConfirmationModal(
-      "delete account",
-      "Do you want to delete this account?",
-      deleteAccount
-    );
+    openModal({
+      title: "Delete Account",
+      message: "Do you want to delete this account?",
+      onApprove: deleteAccount,
+    });
   };
 
   const onClickMenuIcon = () => {

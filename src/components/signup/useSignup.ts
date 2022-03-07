@@ -1,10 +1,9 @@
 import { useContext } from "react";
 import { auth, createUserProfileDocument } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
 import { ProgressContext } from "../../providers/progress/ProgressProvider";
+import { OpenModal } from "../modal/useModal";
 
-const useSignup = () => {
-  const { openBasicModal } = useContext(ModalContext);
+const useSignup = (openModal: OpenModal) => {
   const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
 
   const signUp = async (
@@ -22,8 +21,11 @@ const useSignup = () => {
       await createUserProfileDocument(user, { displayName });
     } catch (err) {
       closeProgressBar();
-      // @ts-ignore
-      openBasicModal("error occurred while signing up", err.message);
+      openModal({
+        title: "error occurred while signing up",
+        // @ts-ignore
+        message: err.message,
+      });
     }
   };
 

@@ -5,6 +5,8 @@ import { Form } from "../common-style/common-style";
 import useSignup from "./useSignup";
 import EMAIL_PATTERN from "../../constants/email-pattern";
 import StatefulTextInput from "../stateful-text-input/stateful-text-input";
+import { BasicModal } from "../modal/modal";
+import { useModal } from "../modal/useModal";
 
 const useStyles = makeStyles({
   signUp: {
@@ -17,7 +19,9 @@ const useStyles = makeStyles({
 
 const SignUpComponent = () => {
   const classes = useStyles();
-  const { signUp } = useSignup();
+  const { isModalOpen, openModal, closeModal, modalTitle, modalMessage } =
+    useModal();
+  const { signUp } = useSignup(openModal);
   const { control, handleSubmit, watch } = useForm();
 
   const onValid = () => {
@@ -82,6 +86,12 @@ const SignUpComponent = () => {
       >
         Sign Up
       </Button>
+      <BasicModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </Form>
   );
 };

@@ -4,6 +4,8 @@ import { Form } from "../common-style/common-style";
 import useSignin from "./useSignin";
 import StatefulTextInput from "../stateful-text-input/stateful-text-input";
 import { useForm } from "react-hook-form";
+import { BasicModal } from "../modal/modal";
+import { useModal } from "../modal/useModal";
 
 const useStyles = makeStyles({
   thirdPartySignInButton: {
@@ -16,7 +18,9 @@ const useStyles = makeStyles({
 
 const SignInComponent = () => {
   const classes = useStyles();
-  const { signIn, handleGoogleSignIn } = useSignin();
+  const { isModalOpen, openModal, closeModal, modalTitle, modalMessage } =
+    useModal();
+  const { signIn, handleGoogleSignIn } = useSignin(openModal);
   const { control, watch, handleSubmit } = useForm();
 
   const onValid = () => {
@@ -61,6 +65,12 @@ const SignInComponent = () => {
           Sign In With A Google Account
         </Button>
       </Form>
+      <BasicModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </>
   );
 };
