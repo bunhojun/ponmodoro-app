@@ -7,6 +7,8 @@ import EMAIL_PATTERN from "../../constants/email-pattern";
 import StatefulTextInput from "../stateful-text-input/stateful-text-input";
 import { BasicModal } from "../modal/modal";
 import { useModal } from "../modal/useModal";
+import { useProgressBar } from "../progress-bar/use-progress-bar";
+import { ProgressBar } from "../progress-bar/progress-bar";
 
 const useStyles = makeStyles({
   signUp: {
@@ -21,7 +23,8 @@ const SignUpComponent = () => {
   const classes = useStyles();
   const { isModalOpen, openModal, closeModal, modalTitle, modalMessage } =
     useModal();
-  const { signUp } = useSignup(openModal);
+  const { isLoading, showProgressBar, closeProgressBar } = useProgressBar();
+  const { signUp } = useSignup(openModal, showProgressBar, closeProgressBar);
   const { control, handleSubmit, watch } = useForm();
 
   const onValid = () => {
@@ -92,6 +95,7 @@ const SignUpComponent = () => {
         title={modalTitle}
         message={modalMessage}
       />
+      <ProgressBar isLoading={isLoading} />
     </Form>
   );
 };

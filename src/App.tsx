@@ -8,7 +8,6 @@ import { Wrapper, Inner } from "./components/common-style/common-style";
 import { auth, createUserProfileDocument } from "./firebase/firebase";
 import PonmodoroPage, { MatchProps } from "./pages/ponmodoro/ponmodoro";
 import PonmodoroProvider from "./providers/ponmodoro/PonmodoroProvider";
-import ProgressProvider from "./providers/progress/ProgressProvider";
 
 const App = () => {
   const currentUserStorage =
@@ -68,14 +67,7 @@ const App = () => {
               )
             }
           />
-          <Route
-            path="/signin"
-            render={() => (
-              <ProgressProvider>
-                <SignInAndUpPage />
-              </ProgressProvider>
-            )}
-          />
+          <Route path="/signin" render={() => <SignInAndUpPage />} />
         </Switch>
       </CurrentUserContext.Provider>
       <footer>

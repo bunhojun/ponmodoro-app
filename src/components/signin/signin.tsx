@@ -6,6 +6,8 @@ import StatefulTextInput from "../stateful-text-input/stateful-text-input";
 import { useForm } from "react-hook-form";
 import { BasicModal } from "../modal/modal";
 import { useModal } from "../modal/useModal";
+import { useProgressBar } from "../progress-bar/use-progress-bar";
+import { ProgressBar } from "../progress-bar/progress-bar";
 
 const useStyles = makeStyles({
   thirdPartySignInButton: {
@@ -20,7 +22,12 @@ const SignInComponent = () => {
   const classes = useStyles();
   const { isModalOpen, openModal, closeModal, modalTitle, modalMessage } =
     useModal();
-  const { signIn, handleGoogleSignIn } = useSignin(openModal);
+  const { isLoading, showProgressBar, closeProgressBar } = useProgressBar();
+  const { signIn, handleGoogleSignIn } = useSignin(
+    openModal,
+    showProgressBar,
+    closeProgressBar
+  );
   const { control, watch, handleSubmit } = useForm();
 
   const onValid = () => {
@@ -71,6 +78,7 @@ const SignInComponent = () => {
         title={modalTitle}
         message={modalMessage}
       />
+      <ProgressBar isLoading={isLoading} />
     </>
   );
 };

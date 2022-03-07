@@ -1,10 +1,15 @@
-import { useContext } from "react";
 import { auth, signInWithGoogle } from "../../firebase/firebase";
-import { ProgressContext } from "../../providers/progress/ProgressProvider";
 import { OpenModal } from "../modal/useModal";
+import {
+  CloseProgressBar,
+  ShowProgressBar,
+} from "../progress-bar/use-progress-bar";
 
-const useSignin = (openModal: OpenModal) => {
-  const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
+const useSignin = (
+  openModal: OpenModal,
+  showProgressBar: ShowProgressBar,
+  closeProgressBar: CloseProgressBar
+) => {
   const errorMessageTitle = "Error occurred while logging in";
 
   const signIn = async (email: string, password: string) => {

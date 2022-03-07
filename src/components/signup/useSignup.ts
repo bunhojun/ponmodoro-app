@@ -1,11 +1,15 @@
-import { useContext } from "react";
 import { auth, createUserProfileDocument } from "../../firebase/firebase";
-import { ProgressContext } from "../../providers/progress/ProgressProvider";
 import { OpenModal } from "../modal/useModal";
+import {
+  CloseProgressBar,
+  ShowProgressBar,
+} from "../progress-bar/use-progress-bar";
 
-const useSignup = (openModal: OpenModal) => {
-  const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
-
+const useSignup = (
+  openModal: OpenModal,
+  showProgressBar: ShowProgressBar,
+  closeProgressBar: CloseProgressBar
+) => {
   const signUp = async (
     email: string,
     password: string,
