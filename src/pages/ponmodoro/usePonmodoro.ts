@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState, ChangeEvent } from "react";
 import { useBeforeunload } from "react-beforeunload";
 import { changeCompletionStatus } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
 import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
 import CurrentUserContext, { UserType } from "../../contexts/user/UserContext";
+import { OpenModal } from "../../components/modal/useModal";
 
-const usePonmodoro = (todoId: string) => {
+const usePonmodoro = (todoId: string, openModal: OpenModal) => {
   const currentUser = useContext<UserType | null>(CurrentUserContext);
   const {
     startPonmodoro,
@@ -15,7 +15,6 @@ const usePonmodoro = (todoId: string) => {
     maxSessionNumber,
     isActive,
   } = useContext(TimerContext);
-  const { openBasicModal } = useContext(ModalContext);
   const { todos } = currentUser || { "": { done: false, todo: "" } };
   const task = todos ? todos[todoId] : { done: false, todo: "" };
   const [done, setDone] = useState(task ? task.done : false);
@@ -85,10 +84,10 @@ const usePonmodoro = (todoId: string) => {
 
   const start = () => {
     if (!("Notification" in window)) {
-      openBasicModal(
-        "browser incompatible",
-        "This browser does not support desktop notification"
-      );
+      openModal({
+        title: "browser incompatible",
+        message: "This browser does not support desktop notification",
+      });
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(() => {
         startPonmodoro();

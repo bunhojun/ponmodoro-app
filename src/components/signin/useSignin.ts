@@ -1,10 +1,9 @@
 import { useContext } from "react";
 import { auth, signInWithGoogle } from "../../firebase/firebase";
-import { ModalContext } from "../../providers/modal/ModalProvider";
 import { ProgressContext } from "../../providers/progress/ProgressProvider";
+import { OpenModal } from "../modal/useModal";
 
-const useSignin = () => {
-  const { openBasicModal } = useContext(ModalContext);
+const useSignin = (openModal: OpenModal) => {
   const { showProgressBar, closeProgressBar } = useContext(ProgressContext);
   const errorMessageTitle = "Error occurred while logging in";
 
@@ -15,18 +14,18 @@ const useSignin = () => {
     } catch (err) {
       closeProgressBar();
       // @ts-ignore
-      openBasicModal(errorMessageTitle, err.message);
+      openModal({ title: errorMessageTitle, message: err.message });
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     try {
       showProgressBar();
-      signInWithGoogle();
+      await signInWithGoogle();
     } catch (err) {
       closeProgressBar();
       // @ts-ignore
-      openBasicModal(errorMessageTitle, err.message);
+      openModal({ title: errorMessageTitle, message: err.message });
     }
   };
 

@@ -20,6 +20,8 @@ import {
 import { CircleTimer } from "../../providers/ponmodoro/PonmodoroProvider";
 import HeaderComponent from "../../components/header/header";
 import usePonmodoro from "./usePonmodoro";
+import { useModal } from "../../components/modal/useModal";
+import { BasicModal } from "../../components/modal/modal";
 
 export type MatchProps = {
   todoId: string;
@@ -72,6 +74,8 @@ const useStyles = makeStyles({
 const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
   const { todoId } = props;
   const classes = useStyles();
+  const { isModalOpen, openModal, closeModal, modalTitle, modalMessage } =
+    useModal();
   const {
     task,
     isActive,
@@ -89,7 +93,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
     onSelectDuration,
     onSelectMaxPeriod,
     start,
-  } = usePonmodoro(todoId);
+  } = usePonmodoro(todoId, openModal);
 
   return (
     <>
@@ -175,6 +179,12 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
           )}
         </Container>
       </Inner>
+      <BasicModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </>
   );
 };

@@ -5,11 +5,13 @@ import {
   changeCompletionStatus,
 } from "../../firebase/firebase";
 import CurrentUserContext, { TodoType } from "../../contexts/user/UserContext";
-import { ModalContext } from "../../providers/modal/ModalProvider";
+import { OpenConfirmationModal } from "../modal/useModal";
 
-const useItem = (task: [string, TodoType]) => {
+const useItem = (
+  task: [string, TodoType],
+  openConfirmationModal: OpenConfirmationModal
+) => {
   const currentUser = useContext(CurrentUserContext);
-  const { openConfirmationModal } = useContext(ModalContext);
   const defaultTodo = task[1].todo;
   const [todo, setTodo] = useState(task[1].todo);
   const [done, setDone] = useState(task[1].done);
@@ -27,13 +29,13 @@ const useItem = (task: [string, TodoType]) => {
   };
 
   const deleteHandler = () => {
-    openConfirmationModal(
-      "deleting a task",
-      "Do you want to delete this task?",
-      () => {
+    openConfirmationModal({
+      title: "deleting a task",
+      message: "Do you want to delete this task?",
+      onApprove: () => {
         deleteTodo(todoId, currentUser);
-      }
-    );
+      },
+    });
   };
 
   const onChangeTextInput = (e: ChangeEvent<HTMLInputElement>) => {

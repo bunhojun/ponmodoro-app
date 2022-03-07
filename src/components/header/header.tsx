@@ -10,6 +10,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import React from "react";
 import { Prompt } from "react-router-dom";
 import useHeader from "./useHeader";
+import { useModal } from "../modal/useModal";
+import { ConfirmationModal } from "../modal/modal";
 
 const useStyles = makeStyles(() => ({
   navBar: {
@@ -20,6 +22,14 @@ const useStyles = makeStyles(() => ({
 const HeaderComponent = () => {
   const classes = useStyles();
   const {
+    isModalOpen,
+    openConfirmationModal,
+    closeModal,
+    modalTitle,
+    modalMessage,
+    onApprove,
+  } = useModal();
+  const {
     isActive,
     isAbleToShowDrawer,
     onClickSignOut,
@@ -27,7 +37,7 @@ const HeaderComponent = () => {
     onClickMenuIcon,
     onClickLink,
     closeDrawer,
-  } = useHeader();
+  } = useHeader(openConfirmationModal);
 
   return (
     <AppBar position="static" className={classes.navBar}>
@@ -44,6 +54,13 @@ const HeaderComponent = () => {
       <Prompt
         when={isActive}
         message="If you leave this page now, this ponmodoro session will be lost. Are you sure?"
+      />
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onClose={closeModal}
+        onApprove={onApprove}
       />
     </AppBar>
   );

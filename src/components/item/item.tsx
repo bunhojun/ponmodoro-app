@@ -13,6 +13,8 @@ import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { TodoType } from "../../contexts/user/UserContext";
 import useItem from "./useItem";
+import { useModal } from "../modal/useModal";
+import { ConfirmationModal } from "../modal/modal";
 
 const useStyles = makeStyles({
   listItem: {
@@ -53,6 +55,14 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
   const classes = useStyles();
   const { task } = props;
   const {
+    isModalOpen,
+    openConfirmationModal,
+    closeModal,
+    modalTitle,
+    modalMessage,
+    onApprove,
+  } = useModal();
+  const {
     isEditing,
     todo,
     done,
@@ -63,7 +73,7 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
     onClickEditButton,
     onClickSaveButton,
     onClickCancelButton,
-  } = useItem(task);
+  } = useItem(task, openConfirmationModal);
 
   return (
     <li>
@@ -104,6 +114,13 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
           )}
         </div>
       </ListItem>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onApprove={onApprove}
+        onClose={closeModal}
+      />
     </li>
   );
 };
