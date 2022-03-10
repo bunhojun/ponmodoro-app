@@ -10,7 +10,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import CancelIcon from "@material-ui/icons/Cancel";
 import React from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+import Link from "next/link";
 import { TodoType } from "../../contexts/user/UserContext";
 import useItem from "./useItem";
 import { useModal } from "../modal/useModal";
@@ -47,9 +47,9 @@ const useStyles = makeStyles({
   },
 });
 
-interface ItemComponentProps extends RouteComponentProps {
+type ItemComponentProps = {
   task: [string, TodoType];
-}
+};
 
 const ItemComponent = (props: ItemComponentProps): JSX.Element => {
   const classes = useStyles();
@@ -87,8 +87,8 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
               onChange={onChangeTextInput}
             />
           ) : (
-            <Link to={`/ponmodoro/${todoId}`} className={classes.link}>
-              {todo}
+            <Link href={`/ponmodoro/${todoId}`}>
+              <a className={classes.link}>{todo}</a>
             </Link>
           )}
         </div>
@@ -125,4 +125,4 @@ const ItemComponent = (props: ItemComponentProps): JSX.Element => {
   );
 };
 
-export default withRouter(ItemComponent);
+export default ItemComponent;

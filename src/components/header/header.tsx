@@ -12,6 +12,7 @@ import { Prompt } from "react-router-dom";
 import useHeader from "./useHeader";
 import { useModal } from "../modal/useModal";
 import { ConfirmationModal } from "../modal/modal";
+import Link from "next/link";
 
 const useStyles = makeStyles(() => ({
   navBar: {
@@ -35,7 +36,6 @@ const HeaderComponent = () => {
     onClickSignOut,
     onClickDeleteAccount,
     onClickMenuIcon,
-    onClickLink,
     closeDrawer,
   } = useHeader(openConfirmationModal);
 
@@ -45,7 +45,9 @@ const HeaderComponent = () => {
         <IconButton onClick={onClickMenuIcon}>
           <MenuIcon />
         </IconButton>
-        <Button onClick={onClickLink}>Ponmodoro</Button>
+        <Link href="/">
+          <a>Ponmodoro</a>
+        </Link>
         <Drawer open={isAbleToShowDrawer} onClose={closeDrawer}>
           <Button onClick={onClickSignOut}>Signout</Button>
           <Button onClick={onClickDeleteAccount}>Delete Account</Button>
