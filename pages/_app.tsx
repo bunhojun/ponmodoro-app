@@ -5,8 +5,10 @@ import { CssBaseline } from "@material-ui/core";
 import { StaticRouter } from "react-router-dom";
 import { auth, createUserProfileDocument } from "../src/firebase/firebase";
 import { Inner, Wrapper } from "../src/components/common-style/common-style";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const currentUserStorage =
     typeof localStorage !== "undefined"
       ? JSON.parse(localStorage.getItem("currentUser") || '{"":""}')
@@ -42,6 +44,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       unsubscribeFromAuth();
     };
   }, []);
+
+  useEffect(() => {
+    if (!currentUser.id) {
+      router.push("/signin");
+    }
+  }, [currentUser]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

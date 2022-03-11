@@ -3,6 +3,7 @@ import {
   Button,
   Drawer,
   IconButton,
+  Link,
   makeStyles,
   Toolbar,
 } from "@material-ui/core";
@@ -12,11 +13,16 @@ import { Prompt } from "react-router-dom";
 import useHeader from "./useHeader";
 import { useModal } from "../modal/useModal";
 import { ConfirmationModal } from "../modal/modal";
-import Link from "next/link";
+import NextLink from "next/link";
 
 const useStyles = makeStyles(() => ({
   navBar: {
     backgroundColor: "#fff",
+  },
+  link: {
+    textTransform: "uppercase",
+    color: "#000",
+    cursor: "pointer",
   },
 }));
 
@@ -45,9 +51,9 @@ const HeaderComponent = () => {
         <IconButton onClick={onClickMenuIcon}>
           <MenuIcon />
         </IconButton>
-        <Link href="/">
-          <a>Ponmodoro</a>
-        </Link>
+        <NextLink href="/">
+          <Link className={classes.link}>Ponmodoro</Link>
+        </NextLink>
         <Drawer open={isAbleToShowDrawer} onClose={closeDrawer}>
           <Button onClick={onClickSignOut}>Signout</Button>
           <Button onClick={onClickDeleteAccount}>Delete Account</Button>
