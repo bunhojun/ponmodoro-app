@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { deleteAccount, signOut } from "../../firebase/firebase";
 import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
 import { OpenConfirmationModal } from "../modal/useModal";
@@ -7,7 +6,6 @@ import { OpenConfirmationModal } from "../modal/useModal";
 const useHeader = (openModal: OpenConfirmationModal) => {
   const { isActive } = useContext(TimerContext);
   const [isAbleToShowDrawer, setIsAbleToShowDrawer] = useState(false);
-  const history = useHistory();
 
   const onClickSignOut = () => {
     setIsAbleToShowDrawer(false);
@@ -31,10 +29,6 @@ const useHeader = (openModal: OpenConfirmationModal) => {
     setIsAbleToShowDrawer(true);
   };
 
-  const onClickLink = () => {
-    history.push("/");
-  };
-
   const closeDrawer = () => {
     setIsAbleToShowDrawer(false);
   };
@@ -45,7 +39,6 @@ const useHeader = (openModal: OpenConfirmationModal) => {
     onClickSignOut,
     onClickDeleteAccount,
     onClickMenuIcon,
-    onClickLink,
     closeDrawer,
   };
 };
