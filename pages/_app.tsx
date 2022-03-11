@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       unsubscribeFromAuth();
     };
-  }, [setCurrentUser]);
+  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
