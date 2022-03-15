@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import React from "react";
-import { Prompt } from "react-router-dom";
 import useHeader from "./useHeader";
 import { useModal } from "../modal/useModal";
 import { ConfirmationModal } from "../modal/modal";
@@ -37,7 +36,7 @@ const HeaderComponent = () => {
     onApprove,
   } = useModal();
   const {
-    isActive,
+    // isActive,
     isAbleToShowDrawer,
     onClickSignOut,
     onClickDeleteAccount,
@@ -59,10 +58,10 @@ const HeaderComponent = () => {
           <Button onClick={onClickDeleteAccount}>Delete Account</Button>
         </Drawer>
       </Toolbar>
-      <Prompt
-        when={isActive}
-        message="If you leave this page now, this ponmodoro session will be lost. Are you sure?"
-      />
+      {/*<Prompt*/}
+      {/*  when={isActive}*/}
+      {/*  message="If you leave this page now, this ponmodoro session will be lost. Are you sure?"*/}
+      {/*/>*/}
       <ConfirmationModal
         isOpen={isModalOpen}
         title={modalTitle}
