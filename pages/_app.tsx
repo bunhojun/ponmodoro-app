@@ -2,7 +2,6 @@ import type { AppProps } from "next/app";
 import React, { useEffect, useState } from "react";
 import CurrentUserContext, { UserType } from "../src/contexts/user/UserContext";
 import { CssBaseline } from "@material-ui/core";
-import { StaticRouter } from "react-router-dom";
 import { auth, createUserProfileDocument } from "../src/firebase/firebase";
 import { Inner, Wrapper } from "../src/components/common-style/common-style";
 import { useRouter } from "next/router";
@@ -53,17 +52,15 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <StaticRouter>
-        <React.StrictMode>
-          <CssBaseline />
-          <Wrapper>
-            <Component {...pageProps} />
-            <footer>
-              <Inner>&#169; Hojun Bun</Inner>
-            </footer>
-          </Wrapper>
-        </React.StrictMode>
-      </StaticRouter>
+      <React.StrictMode>
+        <CssBaseline />
+        <Wrapper>
+          <Component {...pageProps} />
+          <footer>
+            <Inner>&#169; Hojun Bun</Inner>
+          </footer>
+        </Wrapper>
+      </React.StrictMode>
     </CurrentUserContext.Provider>
   );
 }
