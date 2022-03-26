@@ -50,13 +50,13 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.14.0",
-    "eslint": "^8.11.0",
+    "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.4.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
-    "prettier": "^2.6.0"
+    "prettier": "^2.6.1"
   },
   "resolutions": {
     "**/@typescript-eslint/eslint-plugin": "^4.1.1",
