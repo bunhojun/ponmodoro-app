@@ -8,7 +8,7 @@ type Props = {
 
 export const AuthedPage = ({ children }: Props): JSX.Element => {
   const currentUser = useContext(CurrentUserContext);
-  if (currentUser?.id) {
+  if (!currentUser?.id) {
     return <Inner />;
   }
   return <>{children}</>;
