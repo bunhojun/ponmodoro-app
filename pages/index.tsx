@@ -1,7 +1,12 @@
 import HomePage from "../src/pages/home/home";
+import { AuthedPage } from "../src/components/authed-page/authed-page";
 
 const Index = () => {
-  return <HomePage />;
+  return (
+    <AuthedPage>
+      <HomePage />
+    </AuthedPage>
+  );
 };
 
 export default Index;
