@@ -1,6 +1,11 @@
-App url: https://ponmodoro-app.vercel.app/
+# Ponmodoro
+Ponmodoro is a productivity enhancement app that is inspired by the pomodoro technique.
+It was named after the author's nickname "Pon". 
 
-### How to use
+## App url
+https://ponmodoro-app.vercel.app/
+
+## How to use
 
 1. Create your account on the [signup page](https://ponmodoro-app.vercel.app//signin)
 2. Add a task to work on in the form saying "add todo"
