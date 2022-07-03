@@ -29,7 +29,7 @@ export const Inner = styled.div<StyleProps>`
   min-height: ${(props) => props.minHeight};
   max-width: 800px;
   margin: 0 auto;
-  margin-top: 3%;
+  padding-top: 3%;
   text-align: center;
 `;
 
