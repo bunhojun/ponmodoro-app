@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (!currentUser.id) {
-      router.push("/signin");
+      router.replace("/signin");
     }
   }, [currentUser]);
 
