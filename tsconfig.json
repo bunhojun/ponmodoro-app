@@ -22,7 +22,7 @@
     "incremental": true
   },
   "include": [
-    "src"
+    "src", "./declaration.d.ts"
   ],
   "exclude": [
     "node_modules"

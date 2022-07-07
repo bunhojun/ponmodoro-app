@@ -6,6 +6,7 @@ import SignInAndUpContainer from "./styled-signInAndUp";
 import SignInComponent from "../../components/signin/signin";
 import SignUpComponent from "../../components/signup/signup";
 import { useRouter } from "next/router";
+import styles from "./signInAndUp.module.css";
 
 const useStyles = makeStyles({
   heading: {
@@ -35,7 +36,7 @@ const SignInAndUpPage = () => {
         <Typography variant="h1">PONMODORO</Typography>
       </div>
       <Inner>
-        <Container height="70vh">
+        <Container className={styles.container}>
           <Typography variant="h2" className={classes.containerHeading}>
             signin or signup
           </Typography>

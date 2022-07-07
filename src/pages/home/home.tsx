@@ -4,6 +4,7 @@ import ListComponent from "../../components/list/list";
 import { Inner, Container } from "../../components/common-style/common-style";
 import CurrentUserContext from "../../contexts/user/UserContext";
 import HeaderComponent from "../../components/header/header";
+import styles from "./home.module.css";
 
 const useStyles = makeStyles({
   heading: {
@@ -17,13 +18,13 @@ const HomePage = () => {
   return (
     <>
       <HeaderComponent />
-      <Inner height="75vh" minHeight="400px">
+      <Inner className={styles.inner}>
         <Typography variant="h2" className={classes.heading}>
           {currentUser
             ? `${currentUser.displayName}'s todo`
             : "the user does not exist"}
         </Typography>
-        <Container height="80%">
+        <Container className={styles.container}>
           <ListComponent />
         </Container>
       </Inner>
