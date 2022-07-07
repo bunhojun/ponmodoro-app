@@ -1,0 +1,30 @@
+.wrapper {
+  min-height: 100vh;
+  background-image: linear-gradient(to right bottom, #f3206d, #fed636);
+  position: relative;
+}
+
+.container {
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.centering {
+  display: flex;
+  justify-content: center;
+}
+
+.inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 3%;
+  text-align: center;
+}
+
+.form {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}

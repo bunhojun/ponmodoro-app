@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import { ReactNode } from "react";
+import styles from "./styled-signInAndUp.module.css";
 
-const SignInAndUpContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
+const SignInAndUpContainer = ({ children }: { children: ReactNode }) => (
+  <div className={styles.signInAndUpContainer}>{children}</div>
+);
 
 export default SignInAndUpContainer;

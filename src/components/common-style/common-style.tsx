@@ -1,45 +1,27 @@
-import styled from "styled-components";
+import { ReactNode } from "react";
+import styles from "./common-style.module.css";
 
-export type StyleProps = {
-  height?: number | string;
-  width?: number | string;
-  minHeight?: number | string;
+type CommonStyle = {
+  children: ReactNode;
+  className?: string;
 };
 
-export const Wrapper = styled.div`
-  min-height: 100vh;
-  background-image: linear-gradient(to right bottom, #f3206d, #fed636);
-  position: relative;
-`;
+export const Wrapper = ({ children, className }: CommonStyle) => (
+  <div className={`${styles.wrapper} ${className}`}>{children}</div>
+);
 
-export const Container = styled.div<StyleProps>`
-  height: ${(props) => props.height};
-  padding: 20px;
-  border-radius: 5px;
-  background-color: #fff;
-`;
+export const Container = ({ children, className }: CommonStyle) => (
+  <div className={`${styles.container} ${className}`}>{children}</div>
+);
 
-export const Centering = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+export const Centering = ({ children, className }: CommonStyle) => (
+  <div className={`${styles.centering} ${className}`}>{children}</div>
+);
 
-export const Inner = styled.div<StyleProps>`
-  height: ${(props) => props.height};
-  min-height: ${(props) => props.minHeight};
-  max-width: 800px;
-  margin: 0 auto;
-  padding-top: 3%;
-  text-align: center;
-`;
+export const Inner = ({ children, className }: CommonStyle) => (
+  <div className={`${styles.inner} ${className}`}>{children}</div>
+);
 
-export const Form = styled.form`
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-`;
-
-export const Input = styled.input`
-  display: block;
-`;
+export const Form = ({ children, className }: CommonStyle) => (
+  <form className={`${styles.form} ${className}`}>{children}</form>
+);
