@@ -26,7 +26,7 @@ const SignInAndUpPage = () => {
 
   useEffect(() => {
     if (currentUser?.id) {
-      router.push("/");
+      router.replace("/");
     }
   }, [currentUser]);
 
