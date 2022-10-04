@@ -170,7 +170,7 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                   label="memo"
                   variant="outlined"
                   multiline
-                  rows={4}
+                  minRows={4}
                 />
               </div>
             </>
