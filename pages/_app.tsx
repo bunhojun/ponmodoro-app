@@ -13,6 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       ? JSON.parse(localStorage.getItem("currentUser") || '{"":""}')
       : {};
   const [currentUser, setCurrentUser] = useState<UserType>(currentUserStorage);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
@@ -49,6 +50,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       router.replace("/signin");
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    // to avoid style error
+    // https://github.com/vercel/next.js/issues/26184#issuecomment-864045985
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
