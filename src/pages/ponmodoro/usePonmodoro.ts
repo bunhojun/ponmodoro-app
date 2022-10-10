@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState, ChangeEvent } from "react";
-import { useBeforeunload } from "react-beforeunload";
 import { changeCompletionStatus } from "../../firebase/firebase";
 import { TimerContext } from "../../providers/ponmodoro/PonmodoroProvider";
 import CurrentUserContext, { UserType } from "../../contexts/user/UserContext";
@@ -27,12 +26,6 @@ const usePonmodoro = (todoId: string, openModal: OpenModal) => {
       label: "min",
     },
   ];
-
-  useBeforeunload((e) => {
-    if (isActive) {
-      e.preventDefault();
-    }
-  });
 
   useEffect(() => {
     if (task) {
