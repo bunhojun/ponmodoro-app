@@ -10,7 +10,7 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/classnames": "^2.2.10",
     "@types/jest": "^29.1.2",
-    "@types/node": "^18.8.4",
+    "@types/node": "^18.8.5",
     "@types/react": "^17.0.43",
     "classnames": "^2.2.6",
     "firebase": "^9.12.0",
