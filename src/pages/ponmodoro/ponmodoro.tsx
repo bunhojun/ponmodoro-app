@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import React from "react";
-import classNames from "classnames/bind";
 import {
   Inner,
   Container,
@@ -157,10 +156,10 @@ const PonmodoroPage = (props: PonmodoroPageProps): JSX.Element => {
                 type="button"
                 disabled={isActive}
                 onClick={start}
-                className={classNames(
-                  classes.startButton,
-                  isActive && classes.buttonDisabled
-                )}
+                className={`
+                  ${classes.startButton}
+                  ${isActive && classes.buttonDisabled}
+                `}
               >
                 start ponmodoro
               </Button>
